@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>RRB CBT History 1857 Revolt</title>
+<style>
+    :root {
+        --bg-color: #121212;
+        --surface-color: #1e1e1e;
+        --primary-cyan: #369BFF;
+        --primary-blue: #2979ff;
+        --text-primary: #ffffff;
+        --text-secondary: #b3b3b3;
+        --border-color: #333333;
+        
+        --color-not-visited: #9e9e9e;
+        --color-not-answered: #f44336;
+        --color-answered: #4caf50;
+        --color-marked: #9c27b0;
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    
+    /* 100dvh prevents mobile browser URL bars from hiding the bottom elements */
+    body { background-color: var(--bg-color); color: var(--text-primary); height: 100vh; height: 100dvh; overflow: hidden; display: flex; flex-direction: column; }
+    
+    /* Views */
+    .view { display: none; flex-direction: column; height: 100%; overflow: hidden; }
+    .view.active { display: flex; }
+    
+    /* Landing Page */
+    .landing-container { max-width: 800px; margin: auto; padding: 40px 20px; text-align: center; overflow-y: auto; }
+    .landing-container h1 { color: var(--primary-cyan); font-size: 2rem; margin-bottom: 20px; }
+    .instructions { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 25px; text-align: left; margin-bottom: 30px; line-height: 1.6; }
+    .instructions h3 { color: var(--primary-cyan); margin-bottom: 15px; }
+    .instructions ul { margin-left: 20px; }
+    .start-btn { background: var(--primary-blue); color: #fff; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
+    .start-btn:hover { background: #1565c0; transform: scale(1.05); }
+
+    /* Header */
+    .header { background-color: var(--surface-color); border-bottom: 2px solid var(--primary-cyan); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; z-index: 50; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+    .header h1 { font-size: 1.2rem; font-weight: 600; color: var(--primary-cyan); }
+    .timer-container { font-size: 1.2rem; font-weight: bold; background: #2a2a2a; padding: 5px 15px; border-radius: 5px; border: 1px solid var(--primary-blue); }
+    
+    /* Mobile Top Bar (Toggle Palette & Submit) */
+    .mobile-top-bar { display: none; width: 100%; flex-shrink: 0; z-index: 40; border-bottom: 1px solid var(--border-color); }
+    .mobile-top-bar button { flex: 1; padding: 12px; border: none; font-weight: bold; font-size: 0.95rem; cursor: pointer; text-transform: uppercase; }
+    .btn-toggle-top { background: #2a2a2a; color: var(--primary-cyan); border-right: 1px solid var(--border-color) !important; }
+    .btn-submit-top { background: var(--color-answered); color: #fff; }
+
+    /* Main Layout */
+    .main-container { display: flex; flex: 1; overflow: hidden; position: relative; }
+    
+    /* Quiz Left Panel */
+    .quiz-left-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    
+    /* Question Scrolling Area */
+    .question-scroll-area { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 40px; }
+    .q-header { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; font-size: 1.1rem; color: var(--primary-cyan); border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+    .question-text { font-size: 1.1rem; line-height: 1.6; margin-bottom: 15px; }
+    .question-tamil { font-size: 1.1rem; line-height: 1.6; color: var(--primary-cyan); margin-bottom: 25px; }
+    
+    .options-list { display: flex; flex-direction: column; gap: 12px; }
+    .option-label { display: flex; align-items: center; padding: 12px 15px; background: #2a2a2a; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    .option-label:hover { border-color: var(--primary-cyan); background: #333; }
+    .option-label input { margin-right: 15px; transform: scale(1.2); accent-color: var(--primary-cyan); }
+    
+    /* Pinned Action Buttons Footer */
+    .action-buttons { flex-shrink: 0; display: flex; flex-wrap: wrap; gap: 10px; padding: 15px 20px; background: var(--surface-color); border-top: 1px solid var(--border-color); z-index: 10; box-shadow: 0 -4px 10px rgba(0,0,0,0.3); }
+    .btn { padding: 10px 15px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.2s; color: #fff; text-transform: uppercase; font-size: 0.85rem; display: flex; justify-content: center; align-items: center; text-align: center; }
+    .btn-prev { background: #424242; }
+    .btn-prev:hover { background: #616161; }
+    .btn-clear { background: #f44336; }
+    .btn-clear:hover { background: #d32f2f; }
+    .btn-mark { background: var(--color-marked); }
+    .btn-mark:hover { background: #7b1fa2; }
+    .btn-save { background: var(--primary-blue); margin-left: auto; }
+    .btn-save:hover { background: #1565c0; }
+
+    /* Palette Section */
+    .palette-section { width: 320px; background: var(--surface-color); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; transition: transform 0.3s ease; flex-shrink: 0; }
+    .palette-header { padding: 15px; border-bottom: 1px solid var(--border-color); font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+    .palette-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 15px; overflow-y: auto; }
+    .q-bubble { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.9rem; color: #fff; background: var(--color-not-visited); border: 2px solid transparent; }
+    .q-bubble.active { border-color: var(--primary-cyan); transform: scale(1.1); box-shadow: 0 0 8px var(--primary-cyan); }
+    
+    .status-0 { background: var(--color-not-visited); color: #000; } 
+    .status-1 { background: var(--color-not-answered); } 
+    .status-2 { background: var(--color-answered); } 
+    .status-3 { background: var(--color-marked); } 
+    .status-4 { background: var(--color-marked); position: relative; } 
+    .status-4::after { content: ''; position: absolute; bottom: 2px; right: 2px; width: 8px; height: 8px; background: var(--color-answered); border-radius: 50%; border: 1px solid #fff; }
+
+    .legend { padding: 15px; font-size: 0.8rem; border-top: 1px solid var(--border-color); display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .legend-box { width: 15px; height: 15px; border-radius: 3px; }
+    .btn-submit-desktop { background: var(--color-answered); width: 100%; padding: 12px; }
+
+    /* Custom Modals (No native alerts) */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
+    .modal-content { background: var(--surface-color); padding: 30px; border-radius: 10px; width: 100%; max-width: 500px; border: 1px solid var(--border-color); text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+    .modal-content h2 { color: var(--primary-cyan); margin-bottom: 20px; }
+    .modal-actions { display: flex; justify-content: center; gap: 15px; margin-top: 25px; }
+    
+    /* Results View */
+    .results-container { max-width: 900px; margin: auto; padding: 40px 20px; text-align: center; overflow-y: auto; width: 100%; }
+    .result-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 30px 0; }
+    .stat-box { background: #2a2a2a; padding: 20px; border-radius: 8px; border-bottom: 4px solid #666; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .stat-box.st-score { border-color: var(--primary-cyan); grid-column: span 2; }
+    .stat-box.st-correct { border-color: var(--color-answered); }
+    .stat-box.st-wrong { border-color: var(--color-not-answered); }
+    .stat-box h3 { font-size: 2.5rem; margin-bottom: 5px; }
+    .stat-box.st-score h3 { font-size: 3.5rem; color: var(--primary-cyan); }
+    
+    /* Tabbed Review Section */
+    #detailed-review-section { display: none; margin-top: 40px; }
+    .review-tabs { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; flex-wrap: wrap; }
+    .tab-btn { background: #2a2a2a; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 12px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; flex: 1; min-width: 110px; text-align: center; transition: 0.2s; }
+    .tab-btn:hover { background: #333; }
+    .tab-btn.active { color: #fff; border-bottom: 3px solid; }
+    .tab-btn[data-tab="correct"].active { border-color: var(--color-answered); background: rgba(76, 175, 80, 0.1); }
+    .tab-btn[data-tab="wrong"].active { border-color: var(--color-not-answered); background: rgba(244, 67, 54, 0.1); }
+    .tab-btn[data-tab="unattempted"].active { border-color: var(--color-not-visited); background: rgba(158, 158, 158, 0.1); }
+    
+    .tab-content { display: none; text-align: left; }
+    .tab-content.active { display: block; }
+    
+    .review-item { padding: 20px; background: #2a2a2a; margin-bottom: 15px; border-radius: 8px; border-left: 5px solid var(--border-color); }
+    .review-item.correct { border-left-color: var(--color-answered); }
+    .review-item.wrong { border-left-color: var(--color-not-answered); }
+    .review-item.unattempted { border-left-color: var(--color-not-visited); }
+    
+    .answer-tag { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; margin-top: 10px; }
+    .tag-correct { background: rgba(76, 175, 80, 0.2); color: #81c784; border: 1px solid #4caf50; }
+    .tag-wrong { background: rgba(244, 67, 54, 0.2); color: #e57373; border: 1px solid #f44336; }
+    .tag-unattempted { background: rgba(158, 158, 158, 0.2); color: #e0e0e0; border: 1px solid #9e9e9e; }
+    
+    .explanation-box { margin-top: 12px; padding: 12px; background: #1e1e1e; border-radius: 5px; border-left: 3px solid var(--primary-cyan); font-size: 0.95rem; line-height: 1.5; color: #ddd; }
+
+    /* MOBILE SPECIFIC OVERRIDES */
+    @media (max-width: 768px) {
+        .mobile-top-bar { display: flex; }
+        .palette-section { position: absolute; top: 0; right: 0; height: 100%; transform: translateX(100%); z-index: 100; box-shadow: -5px 0 15px rgba(0,0,0,0.5); }
+        .palette-section.open { transform: translateX(0); }
+        
+        .result-grid { grid-template-columns: 1fr; }
+        .stat-box.st-score { grid-column: span 1; }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            padding: 10px;
+            padding-bottom: max(10px, env(safe-area-inset-bottom));
+        }
+        .btn-save { grid-column: span 2; margin-left: 0; padding: 15px; font-size: 1.1rem; order: 1; }
+        .btn-mark { order: 2; padding: 12px; }
+        .btn-clear { order: 3; padding: 12px; }
+        .btn-prev { grid-column: span 2; order: 4; padding: 12px; }
+    }
+</style>
+</head>
+<body>
+
+<!-- VIEW 1: Landing Page -->
+<div id="view-landing" class="view active">
+    <div class="landing-container">
+        <h1>RRB CBT: 1857 revolt</h1>
+        <div class="instructions">
+            <h3>📝 Instructions:</h3>
+            <ul>
+                <li><strong>Total Questions:</strong> 100 (Bilingual: English & Tamil).</li>
+                <li><strong>Time Allotted:</strong> 30 Minutes.</li>
+                <li><strong>Marking Scheme:</strong> +1 mark for correct answers, <strong>-0.33 marks</strong> for incorrect answers.</li>
+                <li>Questions are shuffled automatically for every attempt.</li>
+                <li>Use the Question Palette to navigate. You can Mark questions for review.</li>
+                <li>Ensure you have a stable connection. Do not refresh the page during the exam.</li>
+            </ul>
+        </div>
+        <button class="start-btn" onclick="startQuiz()">I am ready to begin</button>
+    </div>
+</div>
+
+<!-- VIEW 2: Main Quiz -->
+<div id="view-quiz" class="view">
+    
+    <div class="header">
+        <h1>1857 Revolt</h1>
+        <div class="timer-container" id="timer">30:00</div>
+    </div>
+
+    <!-- Mobile Explicit Top Bar -->
+    <div class="mobile-top-bar">
+        <button class="btn-toggle-top" onclick="togglePalette()">☰ Question Palette</button>
+        <button class="btn-submit-top" onclick="showSubmitConfirm()">Submit Exam</button>
+    </div>
+
+    <div class="main-container">
+        
+        <!-- Question Panel (Scrollable content + Fixed Footer) -->
+        <div class="quiz-left-panel">
+            
+            <div class="question-scroll-area">
+                <div class="q-header">
+                    <span id="q-no">Question 1</span>
+                    <span style="color: var(--text-secondary); font-size: 0.9rem;">Negative Marks: -0.33</span>
+                </div>
+                
+                <div class="question-text" id="q-text-en">Loading...</div>
+                <div class="question-tamil" id="q-text-ta">ஏற்றுகிறது...</div>
+                
+                <div class="options-list" id="options-container"></div>
+            </div>
+            
+            <!-- Fixed Action Buttons Footer -->
+            <div class="action-buttons">
+                <button class="btn btn-save" onclick="saveAndNext()">Save & Next ►</button>
+                <button class="btn btn-mark" onclick="markAndNext()">Mark & Next</button>
+                <button class="btn btn-clear" onclick="clearResponse()">Clear</button>
+                <button class="btn btn-prev" onclick="prevQuestion()">◄ Previous</button>
+            </div>
+            
+        </div>
+        
+        <!-- Collapsible Palette -->
+        <div class="palette-section" id="palette">
+            <div class="palette-header">
+                <span>Question Palette</span>
+                <button onclick="togglePalette()" class="btn btn-prev" style="padding: 5px; display: none;" id="close-palette-btn">X</button>
+            </div>
+            <div class="palette-grid" id="palette-grid"></div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-box status-2"></div> Answered</div>
+                <div class="legend-item"><div class="legend-box status-1"></div> Not Answered</div>
+                <div class="legend-item"><div class="legend-box status-0"></div> Not Visited</div>
+                <div class="legend-item"><div class="legend-box status-3"></div> Marked</div>
+                <div class="legend-item"><div class="legend-box status-4"></div> Ans & Marked</div>
+            </div>
+            <div style="padding: 15px;">
+                <button class="btn btn-submit btn-submit-desktop" onclick="showSubmitConfirm()">SUBMIT EXAM</button>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<!-- Custom Confirmation Modal -->
+<div class="modal-overlay" id="confirm-modal">
+    <div class="modal-content">
+        <h2>Submit Exam?</h2>
+        <p>Are you sure you want to submit? You will not be able to change your answers.</p>
+        <p id="unanswered-warning" style="color: var(--color-not-answered); margin-top: 10px; font-weight: bold; display: none;"></p>
+        <div class="modal-actions">
+            <button class="btn btn-prev" onclick="closeSubmitConfirm()">No, Go Back</button>
+            <button class="btn btn-submit" style="width: auto; margin-top: 0; padding: 10px 20px;" onclick="submitExam()">Yes, Submit</button>
+        </div>
+    </div>
+</div>
+
+<!-- VIEW 3: Results & Review -->
+<div id="view-results" class="view">
+    <div class="results-container">
+        <h1 style="color: var(--primary-cyan); font-size: 2.2rem; margin-bottom: 20px;">Exam Submitted Successfully</h1>
+        
+        <div class="result-grid">
+            <div class="stat-box st-score">
+                <div>Final Score</div>
+                <h3 id="res-score">0.00</h3>
+                <div style="color: var(--text-secondary); font-size: 0.9rem;" id="out-of-text">(Out of 100)</div>
+            </div>
+            <div class="stat-box st-correct">
+                <h3 id="res-correct">0</h3>
+                <div>Correct</div>
+            </div>
+            <div class="stat-box st-wrong">
+                <h3 id="res-wrong">0</h3>
+                <div>Incorrect</div>
+            </div>
+        </div>
+        
+        <p style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 25px;">Unattempted Questions: <strong id="res-unattempted" style="color: #fff;">0</strong></p>
+        
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;" id="post-exam-actions">
+            <button class="btn btn-save" onclick="showDetailedReview()">View Detailed Review</button>
+            <button class="btn btn-prev" onclick="location.reload()">Restart Quiz</button>
+        </div>
+        
+        <!-- 3-Section Tabbed Review -->
+        <div id="detailed-review-section">
+            <h2 style="margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Test Review</h2>
+            
+            <div class="review-tabs">
+                <button class="tab-btn" data-tab="correct" onclick="switchTab('correct')">Correct (<span id="tab-count-correct">0</span>)</button>
+                <button class="tab-btn" data-tab="wrong" onclick="switchTab('wrong')">Incorrect (<span id="tab-count-wrong">0</span>)</button>
+                <button class="tab-btn" data-tab="unattempted" onclick="switchTab('unattempted')">Unattempted (<span id="tab-count-unattempted">0</span>)</button>
+            </div>
+            
+            <div id="review-content-correct" class="tab-content"></div>
+            <div id="review-content-wrong" class="tab-content"></div>
+            <div id="review-content-unattempted" class="tab-content"></div>
+        </div>
+        
+    </div>
+</div>
+
+<script>
+
+const baseQuizData = [
+    // ================= 40 REVOLT OF 1857 MCQS (Q1 - Q40) =================
+    // 1 (a: 0)
+    {
+        qE: "Which Governor-General passed the General Service Enlistment Act of 1856, requiring Bengal Army sepoys to serve overseas if needed?",
+        qT: "வங்காள ராணுவச் சிப்பாய்கள் தேவைப்பட்டால் கடல் கடந்து பணியாற்ற வேண்டும் என்ற 1856 பொதுப் பணிப் பட்டியல் சட்டத்தை நிறைவேற்றிய தலைமை ஆளுநர் யார்?",
+        oE: ["Lord Canning", "Lord Dalhousie", "Lord Wellesley", "Lord Cornwallis"],
+        oT: ["கானிங் பிரபு", "டல்ஹௌசி பிரபு", "வெல்லெஸ்லி பிரபு", "காரன்வாலிஸ் பிரபு"],
+        a: 0,
+        exp: "Lord Canning passed the General Service Enlistment Act in 1856, which offended sepoys because crossing the sea was considered a loss of caste."
+    },
+    // 2 (a: 1)
+    {
+        qE: "Which was the first Indian state to be annexed under Lord Dalhousie's Doctrine of Lapse in 1848?",
+        qT: "1848-ஆம் ஆண்டு டல்ஹௌசி பிரபுவின் வாரிசு இழப்புக் கொள்கையின் கீழ் இணைக்கப்பட்ட முதல் இந்திய சமஸ்தானம் எது?",
+        oE: ["Jhansi", "Satara", "Nagpur", "Sambalpur"],
+        oT: ["ஜான்சி", "சதாரா", "நாக்பூர்", "சம்பல்பூர்"],
+        a: 1,
+        exp: "Satara (1848) was the first state annexed under the Doctrine of Lapse, followed by Jaitpur & Sambalpur (1849), Udaipur (1852), Jhansi (1853), and Nagpur (1854)."
+    },
+    // 3 (a: 2)
+    {
+        qE: "In which year was Jhansi annexed by the British under the Doctrine of Lapse?",
+        qT: "வாரிசு இழப்புக் கொள்கையின் கீழ் ஜான்சி எந்த ஆண்டு பிரிட்டிஷாரால் இணைக்கப்பட்டது?",
+        oE: ["1849", "1852", "1853", "1854"],
+        oT: ["1849", "1852", "1853", "1854"],
+        a: 2,
+        exp: "Jhansi was annexed in 1853, while Udaipur was annexed in 1852 and Nagpur in 1854."
+    },
+    // 4 (a: 3)
+    {
+        qE: "Who was the last Nawab of Awadh deposed by the British when Awadh was annexed in 1856?",
+        qT: "1856-இல் அவத் இணைக்கப்பட்டபோது பிரிட்டிஷாரால் பதவி நீக்கம் செய்யப்பட்ட அவத்தின் கடைசி நவாப் யார்?",
+        oE: ["Bahadur Shah Zafar II", "Mirza Feroz Shah", "Nana Saheb", "Mirza Wajid Ali Shah"],
+        oT: ["இரண்டாம் பகதூர் ஷா ஜாபர்", "மிர்சா ஃபெரோஸ் ஷா", "நானா சாகிப்", "மிர்சா வாஜித் அலி ஷா"],
+        a: 3,
+        exp: "Mirza Wajid Ali Shah was the last Nawab of Awadh, deposed in 1856 on the grounds of misgovernance."
+    },
+    // 5 (a: 1)
+    {
+        qE: "On what official ground did Lord Dalhousie annex Awadh in 1856?",
+        qT: "1856-ஆம் ஆண்டு டல்ஹௌசி பிரபு எந்த அதிகாரப்பூர்வ காரணத்தின் அடிப்படையில் அவத்தை இணைத்தார்?",
+        oE: ["Absence of a natural male heir", "Misgovernance", "Violation of Subsidiary Alliance", "Refusal to pay land revenue"],
+        oT: ["இயற்கை ஆண் வாரிசு இல்லாதது", "தவறான நிர்வாகம்", "துணைப்படைத் திட்ட மீறல்", "நிலவரி செலுத்த மறுத்தது"],
+        a: 1,
+        exp: "Awadh was annexed in 1856 on the grounds of misgovernance (maladministration)."
+    },
+    // 6 (a: 0)
+    {
+        qE: "Which region was known as the 'Nursery of the British Army' because a majority of Bengal Army sepoys were recruited from there?",
+        qT: "பெரும்பாலான சிப்பாய்கள் அங்கிருந்து தேர்ந்தெடுக்கப்பட்டதால் 'பிரிட்டிஷ் ராணுவத்தின் நாற்றங்கால்' என்று அழைக்கப்பட்ட பகுதி எது?",
+        oE: ["Awadh", "Punjab", "Bengal", "Maharashtra"],
+        oT: ["அவத்", "பஞ்சாப்", "வங்காளம்", "மகாராஷ்டிரா"],
+        a: 0,
+        exp: "Awadh was called the 'Nursery of the British Army', and its annexation in 1856 deeply angered the sepoys."
+    },
+    // 7 (a: 3)
+    {
+        qE: "Which revenue settlement introduced in Awadh in 1856 bypassed the traditional Taluqdars and settled revenue directly with peasants?",
+        qT: "1856-இல் அவத்தில் பாரம்பரிய தாலுக்தார்களைப் புறக்கணித்து விவசாயிகளுடன் நேரடியாக வரி நிர்ணயம் செய்த வருவாய் திட்டம் எது?",
+        oE: ["Permanent Settlement", "Mahalwari Settlement", "Sunset Settlement", "Summary Settlement"],
+        oT: ["நிரந்தர நிலவரித் திட்டம்", "மஹல்வாரித் திட்டம்", "சூரிய அஸ்தமனத் திட்டம்", "சுருக்க நிலவரித் திட்டம்"],
+        a: 3,
+        exp: "The Summary Settlement of 1856 dispossessed the Taluqdars of their land and power, pushing them to join the 1857 Revolt."
+    },
+    // 8 (a: 2)
+    {
+        qE: "Which older musket was replaced by the new Enfield Rifle in the British Indian Army prior to the 1857 Revolt?",
+        qT: "1857 புரட்சிக்கு முன்பு பிரிட்டிஷ் இந்திய ராணுவத்தில் புதிய என்ஃபீல்டு துப்பாக்கி எந்தப் பழைய துப்பாக்கிக்கு மாற்றாக அறிமுகப்படுத்தப்பட்டது?",
+        oE: ["Martini-Henry", "Lee-Enfield", "Brown Bess", "Snider-Enfield"],
+        oT: ["மார்டினி-ஹென்றி", "லீ-என்ஃபீல்டு", "பிரவுன் பெஸ்", "ஸ்னைடர்-என்ஃபீல்டு"],
+        a: 2,
+        exp: "The percussion-lock Enfield Rifle replaced the older Brown Bess smooth-bore flintlock musket."
+    },
+    // 9 (a: 2)
+    {
+        qE: "To which regiment did Mangal Pandey belong when he attacked British officers at Barrackpore?",
+        qT: "பராக்பூரில் பிரிட்டிஷ் அதிகாரிகளைத் தாக்கியபோது மங்கள் பாண்டே எந்தப் படைப்பிரிவைச் சேர்ந்தவராக இருந்தார்?",
+        oE: ["19th Bengal Native Infantry", "24th Bengal Native Infantry", "34th Bengal Native Infantry", "47th Bengal Native Infantry"],
+        oT: ["19வது வங்காள பூர்வீகக் காலாட்படை", "24வது வங்காள பூர்வீகக் காலாட்படை", "34வது வங்காள பூர்வீகக் காலாட்படை", "47வது வங்காள பூர்வீகக் காலாட்படை"],
+        a: 2,
+        exp: "Mangal Pandey was a sepoy in the 34th Bengal Native Infantry who attacked British officers on 29 March 1857."
+    },
+    // 10 (a: 0)
+    {
+        qE: "On which date was Mangal Pandey hanged following the Barrackpore incident?",
+        qT: "பராக்பூர் சம்பவத்தைத் தொடர்ந்து மங்கள் பாண்டே எந்தத் தேதியில் தூக்கிலிடப்பட்டார்?",
+        oE: ["8 April 1857", "29 March 1857", "9 May 1857", "10 May 1857"],
+        oT: ["ஏப்ரல் 8, 1857", "மார்ச் 29, 1857", "மே 9, 1857", "மே 10, 1857"],
+        a: 0,
+        exp: "Mangal Pandey attacked British officers on 29 March 1857 and was hanged on 8 April 1857."
+    },
+    // 11 (a: 3)
+    {
+        qE: "On which date did the Revolt of 1857 formally begin in Meerut with sepoys marching towards Delhi?",
+        qT: "மீரட்டில் சிப்பாய்கள் டெல்லியை நோக்கி அணிவகுத்ததன் மூலம் 1857 புரட்சி எந்தத் தேதியில் முறைப்படி தொடங்கியது?",
+        oE: ["29 March 1857", "8 April 1857", "9 May 1857", "10 May 1857"],
+        oT: ["மார்ச் 29, 1857", "ஏப்ரல் 8, 1857", "மே 9, 1857", "மே 10, 1857"],
+        a: 3,
+        exp: "After 85 sepoys were jailed on 9 May 1857, the Revolt of 1857 formally began in Meerut on 10 May 1857."
+    },
+    // 12 (a: 1)
+    {
+        qE: "Who was the actual military leader of the 1857 Revolt in Delhi while Bahadur Shah Zafar II served as the nominal head?",
+        qT: "டெல்லியில் இரண்டாம் பகதூர் ஷா ஜாபர் பெயரளவுத் தலைவராக இருந்தபோது, 1857 புரட்சியின் உண்மையான ராணுவத் தலைவராகச் செயல்பட்டவர் யார்?",
+        oE: ["Tantia Tope", "General Bakht Khan", "Bahadur Khan Rohilla", "Feroz Shah"],
+        oT: ["தாந்தியா தோபே", "ஜெனரல் பக்த் கான்", "பகதூர் கான் ரோகில்லா", "ஃபெரோஸ் ஷா"],
+        a: 1,
+        exp: "While Bahadur Shah Zafar II was the nominal leader in Delhi, General Bakht Khan led the actual military operations."
+    },
+    // 13 (a: 0)
+    {
+        qE: "To which place was the last Mughal Emperor Bahadur Shah Zafar II exiled after the suppression of the 1857 Revolt?",
+        qT: "1857 புரட்சி அடக்கப்பட்ட பிறகு கடைசி முகலாயப் பேரரசர் இரண்டாம் பகதூர் ஷா ஜாபர் எந்த இடத்திற்கு நாடு கடத்தப்பட்டார்?",
+        oE: ["Rangoon", "Andaman", "Calcutta", "Nepal"],
+        oT: ["ரங்கூன்", "அந்தமான்", "கல்கத்தா", "நேபாளம்"],
+        a: 0,
+        exp: "Bahadur Shah Zafar II was exiled to Rangoon, Burma (now Myanmar) after the revolt."
+    },
+    // 14 (a: 2)
+    {
+        qE: "Who led the Revolt of 1857 in Lucknow?",
+        qT: "லக்னோவில் 1857 புரட்சிக்குத் தலைமை தாங்கியவர் யார்?",
+        oE: ["Rani Lakshmibai", "Debi Chaudhurani", "Begum Hazrat Mahal", "Subhadra Kumari Chauhan"],
+        oT: ["ராணி லட்சுமிபாய்", "தேவி சௌதுரானி", "பேகம் ஹஸ்ரத் மஹால்", "சுபத்ரா குமாரி சௌஹான்"],
+        a: 2,
+        exp: "Begum Hazrat Mahal led the Revolt of 1857 in Lucknow."
+    },
+    // 15 (a: 1)
+    {
+        qE: "Nana Saheb, who led the 1857 Revolt in Kanpur alongside Tantia Tope, was the adopted son of which Maratha Peshwa?",
+        qT: "தாந்தியா தோபேயுடன் இணைந்து கான்பூரில் 1857 புரட்சிக்குத் தலைமை தாங்கிய நானா சாகிப் எந்த மராட்டிய பேஷ்வாவின் வளர்ப்பு மகனாவார்?",
+        oE: ["Peshwa Balaji Baji Rao", "Peshwa Baji Rao II", "Peshwa Madhavrao", "Peshwa Narayanrao"],
+        oT: ["பேஷ்வா பாலாஜி பாஜிராவ்", "பேஷ்வா இரண்டாம் பாஜிராவ்", "பேஷ்வா மாதவராவ்", "பேஷ்வா நாராயணராவ்"],
+        a: 1,
+        exp: "Nana Saheb was the adopted son of Peshwa Baji Rao II and led the revolt in Kanpur with Tantia Tope."
+    },
+    // 16 (a: 3)
+    {
+        qE: "What was the original name of Rani Lakshmibai of Jhansi?",
+        qT: "ஜான்சி ராணி லட்சுமிபாயின் இயற்பெயர் என்ன?",
+        oE: ["Ahilyabai Holkar", "Tarabai Bhosale", "Avantibai Lodhi", "Manikarnika Tambe"],
+        oT: ["அஹில்யாபாய் ஹோல்கர்", "தாராபாய் போசலே", "அவந்திபாய் லோதி", "மணிகர்ணிகா தாம்பே"],
+        a: 3,
+        exp: "Rani Lakshmibai's original name was Manikarnika Tambe (nicknamed Manu)."
+    },
+    // 17 (a: 2)
+    {
+        qE: "In which city is the tomb of Rani Lakshmibai situated?",
+        qT: "ராணி லட்சுமிபாயின் கல்லறை எந்த நகரத்தில் அமைந்துள்ளது?",
+        oE: ["Jhansi", "Kanpur", "Gwalior", "Lucknow"],
+        oT: ["ஜான்சி", "கான்பூர்", "குவாலியர்", "லக்னோ"],
+        a: 2,
+        exp: "Rani Lakshmibai's tomb is situated in Gwalior."
+    },
+    // 18 (a: 3)
+    {
+        qE: "Who led the Revolt of 1857 in Bihar as a landlord of Jagdishpur?",
+        qT: "ஜகதீஷ்பூரின் நிலக்கிழாராக இருந்து பீகாரில் 1857 புரட்சிக்குத் தலைமை தாங்கியவர் யார்?",
+        oE: ["Shah Mal", "Bakht Khan", "Bahadur Khan Rohilla", "Kunwar Singh"],
+        oT: ["ஷா மால்", "பக்த் கான்", "பகதூர் கான் ரோகில்லா", "குன்வர் சிங்"],
+        a: 3,
+        exp: "Kunwar Singh, a landlord of Jagdishpur, led the 1857 Revolt in Bihar."
+    },
+    // 19 (a: 0)
+    {
+        qE: "Who led the Revolt of 1857 in Bareilly?",
+        qT: "பரேலியில் 1857 புரட்சிக்குத் தலைமை தாங்கியவர் யார்?",
+        oE: ["Bahadur Khan Rohilla", "Maulvi Ahmadullah", "Kunwar Singh", "Barkat Ahmad"],
+        oT: ["பகதூர் கான் ரோகில்லா", "மௌல்வி அகமதுல்லா", "குன்வர் சிங்", "பர்கத் அகமது"],
+        a: 0,
+        exp: "Bahadur Khan Rohilla led the 1857 Revolt in Bareilly."
+    },
+    // 20 (a: 1)
+    {
+        qE: "Which leader of the 1857 Revolt in Faizabad was also famously known as 'Danka Shah'?",
+        qT: "பைசாபாத்தில் 1857 புரட்சிக்குத் தலைமை தாங்கிய எந்தத் தலைவர் 'டங்கா ஷா' என்றும் அழைக்கப்பட்டார்?",
+        oE: ["Feroz Shah", "Maulvi Ahmadullah", "Shah Mal", "General Bakht Khan"],
+        oT: ["ஃபெரோஸ் ஷா", "மௌல்வி அகமதுல்லா", "ஷா மால்", "ஜெனரல் பக்த் கான்"],
+        a: 1,
+        exp: "Maulvi Ahmadullah led the revolt in Faizabad and was popularly known as 'Danka Shah'."
+    },
+    // 21 (a: 3)
+    {
+        qE: "Who mobilized the villagers of Pargana Baraut in Baghpat, Uttar Pradesh during the Revolt of 1857?",
+        qT: "1857 புரட்சியின் போது உத்தரப் பிரதேசத்தின் பாக்பத் பகுதியில் உள்ள பர்கானா பரோட் கிராம மக்களைத் திரட்டியவர் யார்?",
+        oE: ["Gonoo", "Kunwar Singh", "Tantia Tope", "Shah Mal"],
+        oT: ["கோனூ", "குன்வர் சிங்", "தாந்தியா தோபே", "ஷா மால்"],
+        a: 3,
+        exp: "Shah Mal led the revolt in Baghpat, Uttar Pradesh by mobilizing the villagers of Pargana Baraut."
+    },
+    // 22 (a: 0)
+    {
+        qE: "Who was Gonoo, a prominent grassroots participant in the 1857 Revolt?",
+        qT: "1857 புரட்சியில் பங்கேற்ற கோனூ என்பவர் யார்?",
+        oE: ["A tribal cultivator of Singhbhum", "A landlord of Jagdishpur", "A sepoy of the 34th Bengal Infantry", "A military commander of Khurda"],
+        oT: ["சிங்பூம் பகுதியைச் சேர்ந்த பழங்குடி விவசாயி", "ஜகதீஷ்பூரின் நிலக்கிழார்", "34வது வங்காள காலாட்படை சிப்பாய்", "குர்தாவின் ராணுவத் தளபதி"],
+        a: 0,
+        exp: "Gonoo was a tribal cultivator of Singhbhum who participated in the 1857 Revolt."
+    },
+    // 23 (a: 1)
+    {
+        qE: "What were 'Ishtahars' circulated during the Revolt of 1857?",
+        qT: "1857 புரட்சியின் போது விநியோகிக்கப்பட்ட 'இஷ்தஹார்கள்' என்பவை யாவை?",
+        oE: ["Secret military maps", "Notifications glorifying Hindu-Muslim unity under the Mughal Empire", "British arrest warrants", "Tax exemption certificates"],
+        oT: ["ரகசிய ராணுவ வரைபடங்கள்", "முகலாயப் பேரரசின் கீழ் இந்து-முஸ்லிம் ஒற்றுமையைப் போற்றும் அறிவிப்புகள்", "பிரிட்டிஷ் கைது ஆணைகள்", "வரி விலக்குச் சான்றிதழ்கள்"],
+        a: 1,
+        exp: "Ishtahars were notifications or posters circulated during the revolt to glorify the co-existence of different communities under the Mughal Empire."
+    },
+    // 24 (a: 2)
+    {
+        qE: "Who issued the 'Azamgarh Proclamation' of 1857 appealing to all sections of society to unite against the British?",
+        qT: "பிரிட்டிஷாருக்கு எதிராக அனைத்துத் தரப்பு மக்களும் ஒன்றிணைய அழைப்பு விடுத்த 1857 'ஆசம்கர் பிரகடனத்தை' வெளியிட்டவர் யார்?",
+        oE: ["Bahadur Shah Zafar II", "Nana Saheb", "Feroz Shah", "Maulvi Ahmadullah"],
+        oT: ["இரண்டாம் பகதூர் ஷா ஜாபர்", "நானா சாகிப்", "ஃபெரோஸ் ஷா", "மௌல்வி அகமதுல்லா"],
+        a: 2,
+        exp: "Feroz Shah, grandson of the Mughal Emperor, issued the Azamgarh Proclamation in 1857."
+    },
+    // 25 (a: 0)
+    {
+        qE: "In the Battle of Chinhat (1857), British forces led by Henry Lawrence were defeated by Indian rebels led by whom?",
+        qT: "1857 சின்ஹாட் போரில் ஹென்றி லாரன்ஸ் தலைமையிலான பிரிட்டிஷ் படைகள் யாரின் தலைமையிலான இந்தியப் புரட்சியாளர்களிடம் தோல்வியடைந்தன?",
+        oE: ["Maulvi Ahmadullah Shah and Barkat Ahmad", "Nana Saheb and Tantia Tope", "Rani Lakshmibai and Kunwar Singh", "General Bakht Khan and Shah Mal"],
+        oT: ["மௌல்வி அகமதுல்லா ஷா மற்றும் பர்கத் அகமது", "நானா சாகிப் மற்றும் தாந்தியா தோபே", "ராணி லட்சுமிபாய் மற்றும் குன்வர் சிங்", "ஜெனரல் பக்த் கான் மற்றும் ஷா மால்"],
+        a: 0,
+        exp: "The Battle of Chinhat (1857) resulted in the defeat of Henry Lawrence's British forces by rebels led by Maulvi Ahmadullah Shah and Barkat Ahmad."
+    },
+    // 26 (a: 3)
+    {
+        qE: "Which British officer suppressed the Revolt of 1857 in Delhi?",
+        qT: "டெல்லியில் 1857 புரட்சியை அடக்கிய பிரிட்டிஷ் அதிகாரி யார்?",
+        oE: ["Colin Campbell", "Hugh Rose", "Henry Lawrence", "John Nicholson"],
+        oT: ["காலின் கேம்ப்பெல்", "ஹியூ ரோஸ்", "ஹென்றி லாரன்ஸ்", "ஜான் நிக்கல்சன்"],
+        a: 3,
+        exp: "John Nicholson suppressed the revolt in Delhi."
+    },
+    // 27 (a: 2)
+    {
+        qE: "Which British commander suppressed the Revolt of 1857 in both Lucknow and Kanpur?",
+        qT: "லக்னோ மற்றும் கான்பூர் ஆகிய இரு இடங்களிலும் 1857 புரட்சியை அடக்கிய பிரிட்டிஷ் தளபதி யார்?",
+        oE: ["John Nicholson", "Hugh Rose", "Colin Campbell", "Lord Dalhousie"],
+        oT: ["ஜான் நிக்கல்சன்", "ஹியூ ரோஸ்", "காலின் கேம்ப்பெல்", "டல்ஹௌசி பிரபு"],
+        a: 2,
+        exp: "Colin Campbell suppressed the revolt in both Lucknow and Kanpur."
+    },
+    // 28 (a: 1)
+    {
+        qE: "Which British officer suppressed the Revolt of 1857 in Jhansi?",
+        qT: "ஜான்சியில் 1857 புரட்சியை அடக்கிய பிரிட்டிஷ் அதிகாரி யார்?",
+        oE: ["John Nicholson", "Hugh Rose", "Colin Campbell", "Henry Lawrence"],
+        oT: ["ஜான் நிக்கல்சன்", "ஹியூ ரோஸ்", "காலின் கேம்ப்பெல்", "ஹென்றி லாரன்ஸ்"],
+        a: 1,
+        exp: "Hugh Rose suppressed the revolt in Jhansi."
+    },
+    // 29 (a: 1)
+    {
+        qE: "Who wrote the famous Hindi poem 'Khoob ladi mardani, vah to Jhansi wali Rani thi'?",
+        qT: "'கூப் லடி மர்தானி, வஹ் தோ ஜான்சி வாலி ராணி தி' என்ற புகழ்பெற்ற கவிதையை எழுதியவர் யார்?",
+        oE: ["Bankim Chandra Chatterjee", "Subhadra Kumari Chauhan", "Dinbandhu Mitra", "Michael Madhusudan Dutt"],
+        oT: ["பங்கிம் சந்திர சாட்டர்ஜி", "சுபத்ரா குமாரி சௌஹான்", "தீனபந்து மித்ரா", "மைக்கேல் மதுசூதன் தத்"],
+        a: 1,
+        exp: "Subhadra Kumari Chauhan wrote the famous poem celebrating Rani Lakshmibai."
+    },
+    // 30 (a: 2)
+    {
+        qE: "On which date was the Revolt of 1857 fully suppressed with the fall of Gwalior?",
+        qT: "குவாலியர் வீழ்ச்சியுடன் 1857 புரட்சி எந்தத் தேதியில் முழுமையாக அடக்கப்பட்டது?",
+        oE: ["10 May 1858", "1 June 1858", "20 June 1858", "1 November 1858"],
+        oT: ["மே 10, 1858", "ஜூன் 1, 1858", "ஜூன் 20, 1858", "நவம்பர் 1, 1858"],
+        a: 2,
+        exp: "The Revolt of 1857 was fully suppressed by 20 June 1858 with the fall of Gwalior."
+    },
+    // 31 (a: 0)
+    {
+        qE: "Who described the Revolt of 1857 as the 'First War of Independence'?",
+        qT: "1857 புரட்சியை 'முதல் சுதந்திரப் போர்' என்று வர்ணித்தவர் யார்?",
+        oE: ["V. D. Savarkar", "R. C. Majumdar", "Lord Canning", "Lord Dalhousie"],
+        oT: ["வி. டி. சாவர்க்கர்", "ஆர். சி. மஜும்தார்", "கானிங் பிரபு", "டல்ஹௌசி பிரபு"],
+        a: 0,
+        exp: "V. D. Savarkar called the Revolt of 1857 the 'First War of Independence'."
+    },
+    // 32 (a: 3)
+    {
+        qE: "Which historian stated that the 1857 Revolt was 'Neither First, nor National, nor a War of Independence'?",
+        qT: "1857 புரட்சி 'முதலாவதும் அல்ல, தேசியமும் அல்ல, சுதந்திரப் போரும் அல்ல' என்று கூறிய வரலாற்றாசிரியர் யார்?",
+        oE: ["V. D. Savarkar", "Bankim Chandra Chatterjee", "John Shore", "R. C. Majumdar"],
+        oT: ["வி. டி. சாவர்க்கர்", "பங்கிம் சந்திர சாட்டர்ஜி", "ஜான் ஷோர்", "ஆர். சி. மஜும்தார்"],
+        a: 3,
+        exp: "Historian R. C. Majumdar famously remarked that the 1857 Revolt was 'Neither First, nor National, nor a War of Independence'."
+    },
+    // 33 (a: 2)
+    {
+        qE: "Following the Revolt of 1857, which commission's recommendations were used to reorganize the British Indian Army?",
+        qT: "1857 புரட்சிக்குப் பிறகு பிரிட்டிஷ் இந்திய ராணுவத்தை மறுசீரமைக்க எந்த ஆணையத்தின் பரிந்துரைகள் பயன்படுத்தப்பட்டன?",
+        oE: ["Hunter Commission", "Deccan Riots Commission", "Peel Commission", "Simon Commission"],
+        oT: ["ஹண்டர் ஆணையம்", "தக்காணக் கலவர ஆணையம்", "பீல் ஆணையம்", "சைமன் ஆணையம்"],
+        a: 2,
+        exp: "After the Government of India Act 1858, the army was reorganized based on the Peel Commission recommendations to reduce the proportion of Indian soldiers."
+    },
+    // 34 (a: 1)
+    {
+        qE: "Who became the first Viceroy of India under the Government of India Act, 1858?",
+        qT: "1858 இந்திய அரசுச் சட்டத்தின் கீழ் இந்தியாவின் முதல் வைஸ்ராயானவர் யார்?",
+        oE: ["Lord Dalhousie", "Lord Canning", "Lord Cornwallis", "Lord Wellesley"],
+        oT: ["டல்ஹௌசி பிரபு", "கானிங் பிரபு", "காரன்வாலிஸ் பிரபு", "வெல்லெஸ்லி பிரபு"],
+        a: 1,
+        exp: "Under the Government of India Act 1858, the East India Company was abolished, power passed to the British Crown, and Lord Canning became the first Viceroy."
+    },
+    // 35 (a: 3)
+    {
+        qE: "In which year was Awadh forced to accept Lord Wellesley's Subsidiary Alliance before its eventual annexation in 1856?",
+        qT: "1856-இல் இணைக்கப்படுவதற்கு முன்பு, வெல்லெஸ்லி பிரபுவின் துணைப்படைத் திட்டத்தை அவத் எந்த ஆண்டு ஏற்கக் கட்டாயப்படுத்தப்பட்டது?",
+        oE: ["1793", "1798", "1799", "1801"],
+        oT: ["1793", "1798", "1799", "1801"],
+        a: 3,
+        exp: "Subsidiary Alliance was introduced by Lord Wellesley in 1798, and Awadh was forced to accept it in 1801."
+    },
+    // 36 (a: 0)
+    {
+        qE: "Who remarked that 'Awadh is like that cherry that will drop into our mouth one day'?",
+        qT: "'அவத் என்பது ஒரு நாள் நம் வாயில் விழப்போகும் செர்ரி பழத்தைப் போன்றது' என்று கூறியவர் யார்?",
+        oE: ["Lord Dalhousie", "Lord Canning", "Lord Wellesley", "John Nicholson"],
+        oT: ["டல்ஹௌசி பிரபு", "கானிங் பிரபு", "வெல்லெஸ்லி பிரபு", "ஜான் நிக்கல்சன்"],
+        a: 0,
+        exp: "Lord Dalhousie made this remark about Awadh prior to its annexation in 1856."
+    },
+    // 37 (a: 1)
+    {
+        qE: "How many sepoys in Meerut were dismissed and sentenced to 10 years in jail on 9 May 1857 for refusing greased cartridges?",
+        qT: "கொழுப்பு தடவிய தோட்டாக்களைப் பயன்படுத்த மறுத்ததற்காக மே 9, 1857 அன்று மீரட்டில் எத்தனை சிப்பாய்கள் பணிநீக்கம் செய்யப்பட்டு 10 ஆண்டுகள் சிறைத்தண்டனை விதிக்கப்பட்டனர்?",
+        oE: ["50 sepoys", "85 sepoys", "100 sepoys", "120 sepoys"],
+        oT: ["50 சிப்பாய்கள்", "85 சிப்பாய்கள்", "100 சிப்பாய்கள்", "120 சிப்பாய்கள்"],
+        a: 1,
+        exp: "On 9 May 1857, 85 sepoys were dismissed and sentenced to 10 years in prison in Meerut, sparking the revolt the next day."
+    },
+    // 38 (a: 0)
+    {
+        qE: "In which year did the percussion-lock Enfield Rifle first come into use in the British Army before being sent to India for trials?",
+        qT: "இந்தியாவிற்கு சோதனைக்காக அனுப்பப்படுவதற்கு முன்பு, என்ஃபீல்டு துப்பாக்கி எந்த ஆண்டு பிரிட்டிஷ் ராணுவத்தில் பயன்பாட்டிற்கு வந்தது?",
+        oE: ["1853", "1848", "1855", "1857"],
+        oT: ["1853", "1848", "1855", "1857"],
+        a: 0,
+        exp: "Produced in the British Ordnance Factory at Enfield near London, the Enfield Rifle came into use in the British Army in 1853."
+    },
+    // 39 (a: 3)
+    {
+        qE: "Which pair of states was annexed in 1849 under the Doctrine of Lapse?",
+        qT: "வாரிசு இழப்புக் கொள்கையின் கீழ் 1849-ஆம் ஆண்டு இணைக்கப்பட்ட இரண்டு சமஸ்தானங்கள் எவை?",
+        oE: ["Satara and Jhansi", "Udaipur and Nagpur", "Jhansi and Nagpur", "Jaitpur and Sambalpur"],
+        oT: ["சதாரா மற்றும் ஜான்சி", "உதய்பூர் மற்றும் நாக்பூர்", "ஜான்சி மற்றும் நாக்பூர்", "ஜெய்த்பூர் மற்றும் சம்பல்பூர்"],
+        a: 3,
+        exp: "Jaitpur and Sambalpur were both annexed in 1849 under Lord Dalhousie's Doctrine of Lapse."
+    },
+    // 40 (a: 2)
+    {
+        qE: "Under the Government of India Act, 1858, power in India was transferred from the East India Company to whom?",
+        qT: "1858 இந்திய அரசுச் சட்டத்தின் கீழ் இந்தியாவின் ஆட்சி அதிகாரம் கிழக்கிந்திய கம்பெனியிடமிருந்து யாரிடம் மாற்றப்பட்டது?",
+        oE: ["Indian National Congress", "British East India Board", "The British Crown", "Governor-General's Council"],
+        oT: ["இந்திய தேசிய காங்கிரஸ்", "பிரிட்டிஷ் கிழக்கிந்திய வாரியம்", "பிரிட்டிஷ் முடியாட்சி", "தலைமை ஆளுநர் குழு"],
+        a: 2,
+        exp: "The Government of India Act, 1858 abolished the East India Company and transferred control directly to the British Crown (Queen Victoria)."
+    },
+
+    // ================= 40 LAND REVENUE, PRE-1857 & POST-1857 REVOLTS MCQS (Q41 - Q80) =================
+    // 41 (a: 1)
+    {
+        qE: "Who planned the Permanent Settlement (Zamindari System) of 1793 introduced by Lord Cornwallis?",
+        qT: "காரன்வாலிஸ் பிரபுவால் 1793-இல் அறிமுகப்படுத்தப்பட்ட நிரந்தர நிலவரித் திட்டத்தைத் திட்டமிட்டவர் யார்?",
+        oE: ["Thomas Munro", "John Shore", "Holt Mackenzie", "Alexander Read"],
+        oT: ["தாமஸ் மன்றோ", "ஜான் ஷோர்", "ஹோல்ட் மெக்கன்சி", "அலெக்சாண்டர் ரீட்"],
+        a: 1,
+        exp: "The Permanent Settlement (1793) was introduced by Lord Cornwallis and planned by John Shore."
+    },
+    // 42 (a: 0)
+    {
+        qE: "Under the Permanent Settlement of 1793, what share of the collected land revenue was taken by the British government?",
+        qT: "1793 நிரந்தர நிலவரித் திட்டத்தின் கீழ் வசூலிக்கப்பட்ட நிலவரியில் எத்தனை பங்கை பிரிட்டிஷ் அரசாங்கம் எடுத்துக்கொண்டது?",
+        oE: ["10/11th", "9/11th", "3/4th", "1/11th"],
+        oT: ["10/11 பங்கு", "9/11 பங்கு", "3/4 பங்கு", "1/11 பங்கு"],
+        a: 0,
+        exp: "Under the Permanent Settlement, the British government took 10/11th of the revenue while the Zamindar kept 1/11th."
+    },
+    // 43 (a: 3)
+    {
+        qE: "What was the 'Sunset Clause' associated with the Permanent Settlement?",
+        qT: "நிரந்தர நிலவரித் திட்டத்துடன் தொடர்புடைய 'சூரிய அஸ்தமன விதி' என்பது என்ன?",
+        oE: ["Peasants could not work after sunset", "Taxes were waived during droughts", "Zamindars had to auction crops before sunset", "Zamindars lost their rights if revenue was not deposited by sunset on a fixed date"],
+        oT: ["விவசாயிகள் சூரிய அஸ்தமனத்திற்குப் பிறகு வேலை செய்யக்கூடாது", "வறட்சியின் போது வரிகள் தள்ளுபடி செய்யப்பட்டன", "ஜமீன்தார்கள் சூரிய அஸ்தமனத்திற்கு முன் பயிர்களை ஏலம் விட வேண்டும்", "குறிப்பிட்ட நாளில் சூரிய அஸ்தமனத்திற்கு முன் வரி செலுத்தாவிட்டால் ஜமீன்தார்களின் உரிமை பறிக்கப்படும்"],
+        a: 3,
+        exp: "The Sunset Clause required Zamindars to deposit revenue before sunset on a specific date, failing which their hereditary zamindari rights were confiscated and auctioned."
+    },
+    // 44 (a: 2)
+    {
+        qE: "Which police system was introduced by Lord Cornwallis, replacing the Zamindari Thanedars?",
+        qT: "ஜமீன்தாரி தானேதார்களுக்குப் பதிலாக காரன்வாலிஸ் பிரபு அறிமுகப்படுத்திய காவல் முறை எது?",
+        oE: ["Kotwal System", "Lambardar System", "Daroga System", "Taluqdar System"],
+        oT: ["கொத்வால் முறை", "லம்பர்தார் முறை", "தரோகா முறை", "தாலுக்தார் முறை"],
+        a: 2,
+        exp: "Lord Cornwallis introduced the Daroga System, replacing Zamindari Thanedars."
+    },
+    // 45 (a: 0)
+    {
+        qE: "Who introduced the Ryotwari System in 1820 in South India?",
+        qT: "1820-ஆம் ஆண்டு தென்னிந்தியாவில் ரயத்துவாரி முறையை அறிமுகப்படுத்தியவர்கள் யார்?",
+        oE: ["Thomas Munro and Captain Alexander Read", "Lord Cornwallis and John Shore", "Holt Mackenzie and William Bentinck", "Warren Hastings and Lord Wellesley"],
+        oT: ["தாமஸ் மன்றோ மற்றும் கேப்டன் அலெக்சாண்டர் ரீட்", "காரன்வாலிஸ் பிரபு மற்றும் ஜான் ஷோர்", "ஹோல்ட் மெக்கன்சி மற்றும் வில்லியம் பென்டிங்க்", "வாரன் ஹேஸ்டிங்ஸ் மற்றும் வெல்லெஸ்லி பிரபு"],
+        a: 0,
+        exp: "Thomas Munro and Captain Alexander Read introduced the Ryotwari System in 1820 in South India (Madras and Bombay)."
+    },
+    // 46 (a: 2)
+    {
+        qE: "The Ryotwari System of 1820 was based on which economist's Theory of Rent?",
+        qT: "1820-ஆம் ஆண்டின் ரயத்துவாரி முறை எந்தப் பொருளாதார நிபுணரின் வாடகைக் கோட்பாட்டின் அடிப்படையில் அமைந்தது?",
+        oE: ["Adam Smith", "Karl Marx", "David Ricardo", "John Maynard Keynes"],
+        oT: ["ஆடம் ஸ்மித்", "கார்ல் மார்க்ஸ்", "டேவிட் ரிகார்டோ", "ஜான் மேனார்ட் கீன்ஸ்"],
+        a: 2,
+        exp: "The Ryotwari System was based on the Ricardian Theory of Rent by economist David Ricardo."
+    },
+    // 47 (a: 1)
+    {
+        qE: "Who conceptualized the Mahalwari System in 1822, which was later reformed by William Bentinck in 1833?",
+        qT: "1822-இல் மஹல்வாரி முறையை உருவாக்கியவரும், பின்னர் 1833-இல் வில்லியம் பென்டிங்கால் சீர்திருத்தப்பட்ட அந்தத் திட்டத்தின் முன்னோடியும் யார்?",
+        oE: ["John Shore", "Holt Mackenzie", "Thomas Munro", "Alexander Read"],
+        oT: ["ஜான் ஷோர்", "ஹோல்ட் மெக்கன்சி", "தாமஸ் மன்றோ", "அலெக்சாண்டர் ரீட்"],
+        a: 1,
+        exp: "Holt Mackenzie introduced the concept of the Mahalwari System in 1822, and William Bentinck reformed it in 1833."
+    },
+    // 48 (a: 3)
+    {
+        qE: "Under the Mahalwari System, who collected revenue from farmers on behalf of the entire village?",
+        qT: "மஹல்வாரி முறையின் கீழ் முழு கிராமத்தின் சார்பாகவும் விவசாயிகளிடமிருந்து வரி வசூலித்தவர் யார்?",
+        oE: ["Zamindar", "Taluqdar", "Daroga", "Lambardar"],
+        oT: ["ஜமீன்தார்", "தாலுக்தார்", "தரோகா", "லம்பர்தார்"],
+        a: 3,
+        exp: "In the Mahalwari System, the Village Headman (Lambardar) collected revenue on behalf of the Mahal (village or group of villages)."
+    },
+    // 49 (a: 3)
+    {
+        qE: "Which famous novel by Bankim Chandra Chatterjee mentions the Sanyasi Revolt (1763–1800)?",
+        qT: "சந்நியாசி புரட்சியை (1763–1800) குறிப்பிடும் பங்கிம் சந்திர சாட்டர்ஜியின் புகழ்பெற்ற நாவல் எது?",
+        oE: ["Nil Darpan", "Durgeshnandini", "Kapalkundala", "Anandmath"],
+        oT: ["நீல் தர்பன்", "துர்கேஷ்நந்தினி", "கபால்குண்டலா", "ஆனந்தமடம்"],
+        a: 3,
+        exp: "Bankim Chandra Chatterjee's famous novel 'Anandmath' mentions the Sanyasi Revolt led by Majnu Shah, Bhawani Pathak, and Debi Chaudhurani."
+    },
+    // 50 (a: 1)
+    {
+        qE: "Who was the famous female participant in the Sanyasi Revolt of Bengal and Bihar?",
+        qT: "வங்காளம் மற்றும் பீகாரின் சந்நியாசி புரட்சியில் பங்கேற்ற புகழ்பெற்ற பெண்மணி யார்?",
+        oE: ["Begum Hazrat Mahal", "Debi Chaudhurani", "Rani Lakshmibai", "Rani Gaidinliu"],
+        oT: ["பேகம் ஹஸ்ரத் மஹால்", "தேவி சௌதுரானி", "ராணி லட்சுமிபாய்", "ராணி கைடின்லியூ"],
+        a: 1,
+        exp: "Debi Chaudhurani was a famous female leader of the Sanyasi Revolt alongside Majnu Shah and Bhawani Pathak."
+    },
+    // 51 (a: 0)
+    {
+        qE: "Who led the Paika Revolt of 1817 in Khurda, Odisha?",
+        qT: "1817-ஆம் ஆண்டு ஒடிசாவின் குர்தாவில் நடைபெற்ற பாய்கா புரட்சிக்குத் தலைமை தாங்கியவர் யார்?",
+        oE: ["Bakshi Jagbandhu Bidyadhar", "Gomdhar Konwar", "Budho Bhagat", "Raja Jagannath"],
+        oT: ["பக்ஷி ஜகபந்து வித்யாதர்", "கோம்தர் கொன்வர்", "புதோ பகத்", "ராஜா ஜெகந்நாத்"],
+        a: 0,
+        exp: "Bakshi Jagbandhu Bidyadhar, military commander of the Khurda King, led the Paika Revolt of 1817."
+    },
+    // 52 (a: 2)
+    {
+        qE: "The Kuka Revolt, suppressed by the British in 1872 under Baba Ram Singh, is also known by what name?",
+        qT: "பாபா ராம் சிங் தலைமையில் நடைபெற்று 1872-இல் பிரிட்டிஷாரால் அடக்கப்பட்ட கூக்கா புரட்சி வேறு எந்தப் பெயரில் அழைக்கப்படுகிறது?",
+        oE: ["Ulgulan Movement", "Pagal Panthi Movement", "Namdhari Movement", "Wahabi Movement"],
+        oT: ["உல்குலான் இயக்கம்", "பாகல் பந்தி இயக்கம்", "நாம்தாரி இயக்கம்", "வஹாபி இயக்கம்"],
+        a: 2,
+        exp: "The Kuka Revolt is also known as the Namdhari Movement, aimed at restoring Sikh purity and opposing British rule."
+    },
+    // 53 (a: 2)
+    {
+        qE: "Who led the Pagal Panthis uprising of 1825 in Mymensingh, Bengal?",
+        qT: "1825-ஆம் ஆண்டு வங்காளத்தின் மைமன்சிங்கில் நடைபெற்ற பாகல் பந்தி எழுச்சிக்குத் தலைமை தாங்கியவர்கள் யார்?",
+        oE: ["Sidhu and Kanhu Murmu", "Digambar and Bishnucharan Biswas", "Karam Shah and Tipu Shah", "Majnu Shah and Bhawani Pathak"],
+        oT: ["சிது மற்றும் கன்ஹு முர்மு", "திகம்பர் மற்றும் பிஷ்ணுசரண் பிஸ்வாஸ்", "கரம் ஷா மற்றும் திப்பு ஷா", "மஜ்னு ஷா மற்றும் பவானி பதக்"],
+        a: 2,
+        exp: "Karam Shah and his son Tipu Shah led the Pagal Panthis uprising in 1825 against the oppression of Zamindars."
+    },
+    // 54 (a: 3)
+    {
+        qE: "Who led the Ahom Revolt of 1828 in Rangpur, Assam?",
+        qT: "1828-ஆம் ஆண்டு அசாமின் ரங்பூரில் நடைபெற்ற அகோம் புரட்சிக்குத் தலைமை தாங்கியவர் யார்?",
+        oE: ["Budho Bhagat", "Birsa Munda", "Ishan Chandra Roy", "Gomdhar Konwar"],
+        oT: ["புதோ பகத்", "பிர்சா முண்டா", "இஷான் சந்திர ராய்", "கோம்தர் கொன்வர்"],
+        a: 3,
+        exp: "Gomdhar Konwar led the Ahom Revolt (1828) after the British refused to withdraw from Assam following the First Anglo-Burmese War."
+    },
+    // 55 (a: 1)
+    {
+        qE: "Who was the leader of the Kol Mutiny of 1831 in Chhotanagpur, Jharkhand?",
+        qT: "1831-ஆம் ஆண்டு ஜார்க்கண்டின் சோட்டாநாக்பூரில் நடைபெற்ற கோல் கலகத்தின் தலைவர் யார்?",
+        oE: ["Birsa Munda", "Budho Bhagat", "Raja Jagannath", "Sidhu Murmu"],
+        oT: ["பிர்சா முண்டா", "புதோ பகத்", "ராஜா ஜெகந்நாத்", "சிது முர்மு"],
+        a: 1,
+        exp: "Budho Bhagat led the Kol Mutiny of 1831 in the Chhotanagpur region."
+    },
+    // 56 (a: 0)
+    {
+        qE: "In which region did the Moplah Uprising of 1836 take place?",
+        qT: "1836-ஆம் ஆண்டின் மாப்ளா எழுச்சி எந்தப் பகுதியில் நடைபெற்றது?",
+        oE: ["Malabar, Kerala", "Khurda, Odisha", "Kolhapur, Maharashtra", "Nadia, Bengal"],
+        oT: ["மலபார், கேரளா", "குர்தா, ஒடிசா", "கோலாப்பூர், மகாராஷ்டிரா", "நதியா, வங்காளம்"],
+        a: 0,
+        exp: "The Moplah Uprising (1836) took place in Malabar, Kerala against landlords and British taxation."
+    },
+    // 57 (a: 1)
+    {
+        qE: "The Munda Uprising led by Birsa Munda in Jharkhand is also famously known as what?",
+        qT: "ஜார்க்கண்டில் பிர்சா முண்டா தலைமையில் நடைபெற்ற முண்டா எழுச்சி வேறு எந்தப் பெயரில் அழைக்கப்படுகிறது?",
+        oE: ["Damin-i-Koh Uprising", "Ulgulan Uprising", "Namdhari Uprising", "Bidrohi Uprising"],
+        oT: ["தாமின்-இ-கோ எழுச்சி", "உல்குலான் எழுச்சி", "நாம்தாரி எழுச்சி", "பித்ரோஹி எழுச்சி"],
+        a: 1,
+        exp: "The Munda Uprising is also known as the Ulgulan Uprising (The Great Tumult)."
+    },
+    // 58 (a: 0)
+    {
+        qE: "What was the traditional joint land ownership system of the Munda tribe whose destruction sparked Birsa Munda's revolt?",
+        qT: "பிர்சா முண்டாவின் புரட்சிக்குக் காரணமான முண்டா பழங்குடியினரின் பாரம்பரிய கூட்டு நில உரிமை முறை எது?",
+        oE: ["Khuntkatti System", "Tinkathia System", "Ryotwari System", "Daroga System"],
+        oT: ["குந்த்கட்டி முறை", "தின்காதியா முறை", "ரயத்துவாரி முறை", "தரோகா முறை"],
+        a: 0,
+        exp: "Birsa Munda's revolt was against 'Dikus' (outsiders/moneylenders) and the destruction of the Khuntkatti System (joint ownership of land)."
+    },
+    // 59 (a: 2)
+    {
+        qE: "Whose birth anniversary on 15 November is celebrated as Janjatiya Gaurav Diwas?",
+        qT: "நவம்பர் 15-ஆம் தேதி யாருடைய பிறந்தநாள் பழங்குடியினர் பெருமை தினமாகக் கொண்டாடப்படுகிறது?",
+        oE: ["Sidhu Murmu", "Budho Bhagat", "Birsa Munda", "Raja Jagannath"],
+        oT: ["சிது முர்மு", "புதோ பகத்", "பிர்சா முண்டா", "ராஜா ஜெகந்நாத்"],
+        a: 2,
+        exp: "Birsa Munda was born on 15 November 1875, celebrated as Janjatiya Gaurav Diwas and Jharkhand Foundation Day."
+    },
+    // 60 (a: 3)
+    {
+        qE: "Who led the Pahariya Revolt of 1778 in the Rajmahal Hills of Jharkhand?",
+        qT: "1778-ஆம் ஆண்டு ஜார்க்கண்டின் ராஜ்மஹால் குன்றுகளில் நடைபெற்ற பஹாரியா புரட்சிக்குத் தலைமை தாங்கியவர் யார்?",
+        oE: ["Sidhu Murmu", "Kanhu Murmu", "Budho Bhagat", "Raja Jagannath"],
+        oT: ["சிது முர்மு", "கன்ஹு முர்மு", "புதோ பகத்", "ராஜா ஜெகந்நாத்"],
+        a: 3,
+        exp: "Raja Jagannath led the Pahariya Revolt (1778) against British policies threatening shifting cultivation and hunting."
+    },
+    // 61 (a: 0)
+    {
+        qE: "In which year was the area around the Rajmahal Hills demarcated and declared as 'Damin-i-Koh', the land of the Santhals?",
+        qT: "ராஜ்மஹால் குன்றுகளைச் சுற்றியுள்ள பகுதி சந்தால்களின் நிலமான 'தாமின்-இ-கோ' என எந்த ஆண்டு அறிவிக்கப்பட்டது?",
+        oE: ["1832", "1820", "1844", "1855"],
+        oT: ["1832", "1820", "1844", "1855"],
+        a: 0,
+        exp: "Damin-i-Koh was demarcated in 1832 as the land of the Santhals (the 3rd largest tribe in India)."
+    },
+    // 62 (a: 2)
+    {
+        qE: "Who were the two main leaders of the Santhal Rebellion of 1855?",
+        qT: "1855-ஆம் ஆண்டின் சந்தால் கிளர்ச்சியின் இரண்டு முக்கியத் தலைவர்கள் யார்?",
+        oE: ["Karam Shah and Tipu Shah", "Digambar and Bishnucharan Biswas", "Sidhu and Kanhu Murmu", "Birsa Munda and Budho Bhagat"],
+        oT: ["கரம் ஷா மற்றும் திப்பு ஷா", "திகம்பர் மற்றும் பிஷ்ணுசரண் பிஸ்வாஸ்", "சிது மற்றும் கன்ஹு முர்மு", "பிர்சா முண்டா மற்றும் புதோ பகத்"],
+        a: 2,
+        exp: "Sidhu and Kanhu Murmu led the Santhal Rebellion of 1855 against moneylenders, police, Zamindars, and Dikus."
+    },
+    // 63 (a: 3)
+    {
+        qE: "Where did the Gadkari Uprising of 1844 start?",
+        qT: "1844-ஆம் ஆண்டின் கட்கரி எழுச்சி எங்கு தொடங்கியது?",
+        oE: ["Nadia", "Khurda", "Rangpur", "Kolhapur"],
+        oT: ["நதியா", "குர்தா", "ரங்பூர்", "கோலாப்பூர்"],
+        a: 3,
+        exp: "The Gadkari Uprising of 1844 started in Kolhapur."
+    },
+    // 64 (a: 1)
+    {
+        qE: "In which district of Bengal did the Indigo Revolt of 1859 begin?",
+        qT: "1859-ஆம் ஆண்டின் அவுரிப் புரட்சி வங்காளத்தின் எந்த மாவட்டத்தில் தொடங்கியது?",
+        oE: ["Mymensingh", "Nadia", "Pabna", "Malda"],
+        oT: ["மைமன்சிங்", "நதியா", "பப்னா", "மால்டா"],
+        a: 1,
+        exp: "The Indigo Revolt (1859) began in Nadia district of Bengal under Digambar Biswas and Bishnucharan Biswas."
+    },
+    // 65 (a: 3)
+    {
+        qE: "Who wrote the famous play 'Nil Darpan' depicting the atrocities of British indigo planters?",
+        qT: "பிரிட்டிஷ் அவுரித் தோட்ட முதலாளிகளின் கொடுமைகளைச் சித்தரிக்கும் 'நீல் தர்பன்' நாடகத்தை எழுதியவர் யார்?",
+        oE: ["Bankim Chandra Chatterjee", "Michael Madhusudan Dutt", "Harish Chandra Mukherjee", "Dinbandhu Mitra"],
+        oT: ["பங்கிம் சந்திர சாட்டர்ஜி", "மைக்கேல் மதுசூதன் தத்", "ஹரிஷ் சந்திர முகர்ஜி", "தீனபந்து மித்ரா"],
+        a: 3,
+        exp: "Dinbandhu Mitra wrote the play 'Nil Darpan' about the Indigo Revolt."
+    },
+    // 66 (a: 1)
+    {
+        qE: "Who translated Dinbandhu Mitra's play 'Nil Darpan' into English?",
+        qT: "தீனபந்து மித்ராவின் 'நீல் தர்பன்' நாடகத்தை ஆங்கிலத்தில் மொழிபெயர்த்தவர் யார்?",
+        oE: ["Girish Chandra Ghosh", "Michael Madhusudan Dutt", "Harish Chandra Mukherjee", "Bankim Chandra Chatterjee"],
+        oT: ["கிரிஷ் சந்திர கோஷ்", "மைக்கேல் மதுசூதன் தத்", "ஹரிஷ் சந்திர முகர்ஜி", "பங்கிம் சந்திர சாட்டர்ஜி"],
+        a: 1,
+        exp: "Bengali poet and playwright Michael Madhusudan Dutt translated 'Nil Darpan' into English."
+    },
+    // 67 (a: 0)
+    {
+        qE: "Which English weekly started in 1853 in Calcutta exposed the atrocities of British indigo planters during the Indigo Revolt?",
+        qT: "1853-இல் கல்கத்தாவில் தொடங்கப்பட்டு, அவுரிப் புரட்சியின் போது பிரிட்டிஷ் தோட்ட முதலாளிகளின் கொடுமைகளை அம்பலப்படுத்திய ஆங்கில வார இதழ் எது?",
+        oE: ["The Hindoo Patriot", "Bengal Gazette", "Amrita Bazar Patrika", "Indian Mirror"],
+        oT: ["தி ஹிந்தூ பேட்ரியாட்", "பெங்கால் கெசட்", "அமிர்த பஜார் பத்ரிகா", "இந்தியன் மிரர்"],
+        a: 0,
+        exp: "Started by Girish Chandra Ghosh in 1853 and later edited by Harish Chandra Mukherjee, 'The Hindoo Patriot' strongly supported the indigo peasants."
+    },
+    // 68 (a: 2)
+    {
+        qE: "In which state did the Deccan Revolt of 1875 against moneylenders and debt bonds occur?",
+        qT: "வட்டிக்குப் பணம் கொடுப்பவர்கள் மற்றும் கடன் பத்திரங்களுக்கு எதிரான 1875 தக்காணப் புரட்சி எந்த மாநிலத்தில் நடைபெற்றது?",
+        oE: ["Bengal", "Odisha", "Maharashtra", "Bihar"],
+        oT: ["வங்காளம்", "ஒடிசா", "மகாராஷ்டிரா", "பீகார்"],
+        a: 2,
+        exp: "The Deccan Revolt of 1875 took place in the Deccan region of Maharashtra."
+    },
+    // 69 (a: 2)
+    {
+        qE: "Before the American Civil War of 1861, what fraction of Britain's cotton imports came from America?",
+        qT: "1861 அமெரிக்க உள்நாட்டுப் போருக்கு முன்பு, பிரிட்டனின் பருத்தி இறக்குமதியில் எத்தனை பங்கு அமெரிக்காவிலிருந்து வந்தது?",
+        oE: ["1/4th", "1/2", "3/4th", "2/3rd"],
+        oT: ["1/4 பங்கு", "1/2 பங்கு", "3/4 பங்கு", "2/3 பங்கு"],
+        a: 2,
+        exp: "Before 1861, Britain imported 3/4th of its cotton from America; the Civil War caused a cotton boom in India, followed by a crash in 1865."
+    },
+    // 70 (a: 0)
+    {
+        qE: "Under the Limitation Law of 1859, for how many years were loan bonds legally valid, enabling moneylenders to trap Deccan farmers in compound interest?",
+        qT: "1859 காலவரம்புச் சட்டத்தின் கீழ் கடன் பத்திரங்கள் எத்தனை ஆண்டுகளுக்கு மட்டுமே செல்லுபடியாகும் என்ற விதி தக்காண விவசாயிகளை வட்டிக்கு வட்டி வலையில் சிக்க வைத்தது?",
+        oE: ["3 years", "5 years", "7 years", "10 years"],
+        oT: ["3 ஆண்டுகள்", "5 ஆண்டுகள்", "7 ஆண்டுகள்", "10 ஆண்டுகள்"],
+        a: 0,
+        exp: "Under the Limitation Law (1859), loan bonds were valid for only 3 years, forcing farmers to sign new bonds adding unpaid interest to the principal."
+    },
+    // 71 (a: 1)
+    {
+        qE: "What were the account books and debt bonds seized and burnt by farmers during the Deccan Revolt of 1875 called?",
+        qT: "1875 தக்காணப் புரட்சியின் போது விவசாயிகளால் கைப்பற்றி எரிக்கப்பட்ட கணக்குப் புத்தகங்கள் மற்றும் கடன் பத்திரங்கள் எவ்வாறு அழைக்கப்பட்டன?",
+        oE: ["Ishtahars", "Dastawez", "Khuntkatti", "Abwab"],
+        oT: ["இஷ்தஹார்கள்", "தஸ்தாவேஜ்", "குந்த்கட்டி", "அப்வாப்"],
+        a: 1,
+        exp: "Farmers attacked moneylenders' houses to seize and burn bonds, decrees, and account books known as 'Dastawez'."
+    },
+    // 72 (a: 3)
+    {
+        qE: "Which Act was passed in 1879 to protect farmers following the report of the Deccan Riots Commission (1878)?",
+        qT: "1878 தக்காணக் கலவர ஆணையத்தின் அறிக்கையைத் தொடர்ந்து விவசாயிகளைப் பாதுகாக்க 1879-இல் நிறைவேற்றப்பட்ட சட்டம் எது?",
+        oE: ["Bengal Tenancy Act", "Champaran Agrarian Act", "Limitation Act", "Deccan Agriculturists' Relief Act"],
+        oT: ["வங்காளக் குத்தகைச் சட்டம்", "சம்பாரண் விவசாயச் சட்டம்", "காலவரம்புச் சட்டம்", "தக்காண விவசாயிகள் நிவாரணச் சட்டம்"],
+        a: 3,
+        exp: "Following the Deccan Riots Commission (1878), the Deccan Agriculturists' Relief Act was passed in 1879."
+    },
+    // 73 (a: 1)
+    {
+        qE: "Who led the Pabna Revolt (1873–1876) in Bengal and was also known as 'Bidrohi Raja' (Rebel King)?",
+        qT: "வங்காளத்தில் பப்னா புரட்சிக்கு (1873–1876) தலைமை தாங்கி 'பித்ரோஹி ராஜா' (புரட்சி மன்னன்) என்று அழைக்கப்பட்டவர் யார்?",
+        oE: ["Digambar Biswas", "Ishan Chandra Roy", "Bishnucharan Biswas", "Tipu Shah"],
+        oT: ["திகம்பர் பிஸ்வாஸ்", "இஷான் சந்திர ராய்", "பிஷ்ணுசரண் பிஸ்வாஸ்", "திப்பு ஷா"],
+        a: 1,
+        exp: "Ishan Chandra Roy led the Pabna Revolt (1873–1876) in Bengal and was known as 'Bidrohi Raja'."
+    },
+    // 74 (a: 3)
+    {
+        qE: "Who founded the Ramosi Peasant Force in Maharashtra in 1879?",
+        qT: "1879-ஆம் ஆண்டு மகாராஷ்டிராவில் ராமோசி விவசாயப் படையை நிறுவியவர் யார்?",
+        oE: ["Gomdhar Konwar", "Bakshi Jagbandhu", "Ishan Chandra Roy", "Vasudev Balwant Phadke"],
+        oT: ["கோம்தர் கொன்வர்", "பக்ஷி ஜகபந்து", "இஷான் சந்திர ராய்", "வாசுதேவ் பல்வந்த் பட்கே"],
+        a: 3,
+        exp: "Vasudev Balwant Phadke founded the Ramosi Peasant Force in Maharashtra in 1879."
+    },
+    // 75 (a: 2)
+    {
+        qE: "Which Governor-General took strict military and administrative measures to suppress the Sanyasi and Fakir disturbances?",
+        qT: "சந்நியாசி மற்றும் பக்கீர் கிளர்ச்சிகளை அடக்க கடுமையான ராணுவ மற்றும் நிர்வாக நடவடிக்கைகளை எடுத்த தலைமை ஆளுநர் யார்?",
+        oE: ["Lord Cornwallis", "Lord Wellesley", "Warren Hastings", "Lord Dalhousie"],
+        oT: ["காரன்வாலிஸ் பிரபு", "வெல்லெஸ்லி பிரபு", "வாரன் ஹேஸ்டிங்ஸ்", "டல்ஹௌசி பிரபு"],
+        a: 2,
+        exp: "Governor-General Warren Hastings faced and suppressed the Sanyasi and Fakir disturbances in Bengal and Bihar."
+    },
+    // 76 (a: 0)
+    {
+        qE: "In which year was the Cotton Supply Association formed in Britain to encourage Indian farmers to grow cotton?",
+        qT: "இந்திய விவசாயிகளைப் பருத்தி பயிரிட ஊக்குவிப்பதற்காக பிரிட்டனில் பருத்தி விநியோகச் சங்கம் எந்த ஆண்டு உருவாக்கப்பட்டது?",
+        oE: ["1857", "1859", "1861", "1865"],
+        oT: ["1857", "1859", "1861", "1865"],
+        a: 0,
+        exp: "The Cotton Supply Association was formed in 1857 to encourage cotton cultivation in India."
+    },
+    // 77 (a: 2)
+    {
+        qE: "In which year did Birsa Munda die in jail?",
+        qT: "பிர்சா முண்டா எந்த ஆண்டு சிறையில் காலமானார்?",
+        oE: ["1895", "1899", "1900", "1902"],
+        oT: ["1895", "1899", "1900", "1902"],
+        a: 2,
+        exp: "Born on 15 November 1875, Birsa Munda died in jail in 1900."
+    },
+    // 78 (a: 1)
+    {
+        qE: "What did the tribal term 'Dikus' refer to during the Santhal and Munda rebellions?",
+        qT: "சந்தால் மற்றும் முண்டா கிளர்ச்சிகளின் போது 'திக்குகள்' என்ற பழங்குடியினச் சொல் யாரைக் குறித்தது?",
+        oE: ["Tribal chiefs", "Outsiders and moneylenders", "British governors", "Forest deities"],
+        oT: ["பழங்குடித் தலைவர்கள்", "வெளியாட்கள் மற்றும் வட்டிக்குப் பணம் கொடுப்பவர்கள்", "பிரிட்டிஷ் ஆளுநர்கள்", "வனத் தெய்வங்கள்"],
+        a: 1,
+        exp: "'Dikus' referred to outsiders, moneylenders, and exploitative intermediaries resented by the tribal communities."
+    },
+    // 79 (a: 0)
+    {
+        qE: "Which British land revenue system was implemented primarily across Punjab, North-Western Provinces, Central India, and parts of Uttar Pradesh?",
+        qT: "பஞ்சாப், வடமேற்கு மாகாணங்கள், மத்திய இந்தியா மற்றும் உத்தரப் பிரதேசத்தின் சில பகுதிகளில் முக்கியமாகச் செயல்படுத்தப்பட்ட பிரிட்டிஷ் நிலவரி முறை எது?",
+        oE: ["Mahalwari System", "Ryotwari System", "Permanent Settlement", "Summary Settlement"],
+        oT: ["மஹல்வாரி முறை", "ரயத்துவாரி முறை", "நிரந்தர நிலவரித் திட்டம்", "சுருக்க நிலவரித் திட்டம்"],
+        a: 0,
+        exp: "The Mahalwari System was implemented in the North-Western Provinces, Central India, Punjab, and parts of Uttar Pradesh."
+    },
+    // 80 (a: 3)
+    {
+        qE: "Who originally started the English weekly 'The Hindoo Patriot' in Calcutta in 1853 before Harish Chandra Mukherjee edited it?",
+        qT: "ஹரிஷ் சந்திர முகர்ஜி பதிப்பாசிரியராகப் பொறுப்பேற்பதற்கு முன்பு 1853-இல் கல்கத்தாவில் 'தி ஹிந்தூ பேட்ரியாட்' வார இதழைத் தொடங்கியவர் யார்?",
+        oE: ["Dinbandhu Mitra", "Michael Madhusudan Dutt", "Ishan Chandra Roy", "Girish Chandra Ghosh"],
+        oT: ["தீனபந்து மித்ரா", "மைக்கேல் மதுசூதன் தத்", "இஷான் சந்திர ராய்", "கிரிஷ் சந்திர கோஷ்"],
+        a: 3,
+        exp: "'The Hindoo Patriot' was started in 1853 at Calcutta by Girish Chandra Ghosh and later edited by Harish Chandra Mukherjee."
+    },
+
+    // ================= 20 STATEMENT-BASED QUESTIONS (Q81 - Q100) =================
+    // 81 (1857 - Ans: 0 - Only 1)
+    {
+        qE: "Consider the following statements:\n1. The General Service Enlistment Act of 1856 was passed by Lord Canning.\n2. The Doctrine of Lapse was introduced by Lord Wellesley in 1848.",
+        qT: "பின்வரும் கூற்றுகளைக் கவனியுங்கள்:\n1. 1856 பொதுப் பணிப் பட்டியல் சட்டம் கானிங் பிரபுவால் நிறைவேற்றப்பட்டது.\n2. வாரிசு இழப்புக் கொள்கை 1848-இல் வெல்லெஸ்லி பிரபுவால் அறிமுகப்படுத்தப்பட்டது.",
+        oE: ["Only 1", "Only 2", "Both 1 and 2", "Neither 1 nor 2"],
+        oT: ["1 மட்டும்", "2 மட்டும்", "1 மற்றும் 2 இரண்டும்", "1 மற்றும் 2 இரண்டும் இல்லை"],
+        a: 0,
+        exp: "Statement 1 is correct. Statement 2 is incorrect because the Doctrine of Lapse was introduced by Lord Dalhousie in 1848."
+    },
+    // 82 (1857 - Ans: 2 - Both 1 and 2)
+    {
+        qE: "Consider the following statements:\n1. Under the Doctrine of Lapse, Satara was annexed in 1848 and Nagpur was annexed in 1854.\n2. Awadh was annexed in 1856 on the grounds of misgovernance.",
+        qT: "பின்வரும் கூற்றுகளைக் கவனியுங்கள்:\n1. வாரிசு இழப்புக் கொள்கையின் கீழ் 1848-இல் சதாராவும், 1854-இல் நாக்பூரும் இணைக்கப்பட்டன.\n2. தவறான நிர்வாகம் என்ற காரணத்தின் அடிப்படையில் 1856-இல் அவத் இணைக்கப்பட்டது.",
+        oE: ["Only 1", "Only 2", "Both 1 and 2", "Neither 1 nor 2"],
+        oT: ["1 மட்டும்", "2 மட்டும்", "1 மற்றும் 2 இரண்டும்", "1 மற்றும் 2 இரண்டும் இல்லை"],
+        a: 2,
+        exp: "Both statements are correct."
+    },
+    // 83 (1857 - Ans: 1 - Only 2)
+    {
+        qE: "Consider the following statements:\n1. Mangal Pandey belonged to the 19th Bengal Native Infantry.\n2. The Revolt of 1857 formally began in Meerut on 10 May 1857.",
+        qT: "பின்வரும் கூற்றுகளைக் கவனியுங்கள்:\n1. மங்கள் பாண்டே 19வது வங்காள பூர்வீகக் காலாட்படையைச் சேர்ந்தவர்.\n2. 1857 புரட்சி மே 10, 1857 அன்று மீரட்டில் முறைப்படி தொடங்கியது.",
+        oE: ["Only 1", "Only 2", "Both 1 and 2", "Neither 1 nor 2"],
+        oT: ["1 மட்டும்", "2 மட்டும்", "1 மற்றும் 2 இரண்டும்", "1 மற்றும் 2 இரண்டும் இல்லை"],
+        a: 1,
+        exp: "Statement 1 is incorrect because Mangal Pandey belonged to the 34th Bengal Native Infantry. Statement 2 is correct."
+    },
+    // 84 (1857 - Ans: 3 - Neither 1 nor 2)
+    {
+        qE: "Consider the following statements:\n1. In Delhi, Nana Saheb served as the actual military leader of the 1857 Revolt.\n2. Begum Hazrat Mahal led the 1857 Revolt in Bareilly.",
+        qT: "பின்வரும் கூற்றுகளைக் கவனியுங்கள்:\n1. டெல்லியில் 1857 புரட்சியின் உண்மையான ராணுவத் தலைவராக நானா சாகிப் செயல்பட்டார்.\n2. பரேலியில் 1857 புரட்சிக்கு பேகம் ஹஸ்ரத் மஹால் தலைமை தாங்கினார்.",
+        oE: ["Only 1", "Only 2", "Both 1 and 2", "Neither 1 nor 2"],
+        oT: ["1 மட்டும்", "2 மட்டும்", "1 மற்றும் 2 இரண்டும்", "1 மற்றும் 2 இரண்டும் இல்லை"],
+        a: 3,
+        exp: "Both statements are incorrect. General Bakht Khan was the actual military leader in Delhi (Nana Saheb led Kanpur), and Begum Hazrat Mahal led Lucknow (Bahadur Khan Rohilla led Bareilly)."
+    },
+    // 85 (1857 - Ans: 0 - Only 1)
+    {
+        qE: "Consider the following statements:\n1. Rani Lakshmibai's tomb is situated in Gwalior.\n2. The Revolt of 1857 in Jhansi was suppressed by Colin Campbell.",
+        qT: "பின்வரும் கூற்றுகளைக் கவனியுங்கள்:\n1. ராணி லட்சுமிபாயின் கல்லறை குவாலியரில் அமைந்துள்ளது.\n2. ஜான்சியில் 1857 புரட்சி காலின் கேம்ப்பெலால் அடக்கப்பட்டது.",
+        oE: ["Only 1", "Only 2", "Both 1 and 2", "Neither 1 nor 2"],
+        oT: ["1 மட்டும்", "2 மட்டும்", "1 மற்றும் 2 இரண்டும்", "1 மற்றும் 2 இரண்டும் இல்லை"],
+        a: 0,
+        exp: "Statement 1 is correct. Statement 2 is incorrect because the revolt in Jhansi was suppressed by Hugh Rose (Colin Campbell suppressed Lucknow and Kanpur)."
+    },
+    // 86 (1857 - Ans: 1 - Only 2)
+    {
+        qE: "Consider the following statements:\n1. In the Battle of Chinhat (1857), British forces led by Henry Lawrence defeated Maulvi Ahmadullah Shah.\n2. Maulvi Ahmadullah was also popularly known as 'Danka Shah'.",
+        qT: "பின்வரும் கூற்றுகளைக் கவனியுங்கள்:\n1. 1857 சின்ஹாட் போரில் ஹென்றி லாரன்ஸ் தலைமையிலான பிரிட்டிஷ் படைகள் மௌல்வி அகமதுல்லா ஷாவைத் தோற்கடித்தன.\n2. மௌல்வி அகமதுல்லா 'டங்கா ஷா' என்றும் பிரபலமாக அழைக்கப்பட்டார்.",
+        oE: ["Only 1", "Only 2", "Both 1 and 2", "Neither 1 nor 2"],
+        oT: ["1 மட்டும்", "2 மட்டும்", "1 மற்றும் 2 இரண்டும்", "1 மற்றும் 2 இரண்டும் இல்லை"],
+        a: 1,
+        exp: "Statement 1 is incorrect because Henry Lawrence's British forces were defeated in the Battle of Chinhat. Statement 2 is correct."
+    },
+    // 87 (1857 - Ans: 2 - Both 1 and 2)
+    {
+        qE: "Consider the following statements:\n1. The Azamgarh Proclamation of 1857 was issued by Feroz Shah, grandson of the Mughal Emperor.\n2. Shah Mal mobilized the villagers of Pargana Baraut in Baghpat, Uttar Pradesh.",
+        qT: "பின்வரும் கூற்றுகளைக் கவனியுங்கள்:\n1. 1857 ஆசம்கர் பிரகடனம் முகலாயப் பேரரசரின் பேரனான ஃபெரோஸ் ஷாவால் வெளியிடப்பட்டது.\n2. உத்தரப் பிரதேசத்தின் பாக்பத்தில் உள்ள பர்கானா பரோட் கிராம மக்களை ஷா மால் திரட்டினார்.",
+        oE: ["Only 1", "Only 2", "Both 1 and 2", "Neither 1 nor 2"],
+        oT: ["1 மட்டும்", "2 மட்டும்", "1 மற்றும் 2 இரண்டும்", "1 மற்றும் 2 இரண்டும் இல்லை"],
+        a: 2,
+        exp: "Both statements are correct."
+    },
+    // 88 (1857 - Ans: 3 - Neither 1 nor 2)
+    {
+        qE: "Consider the following statements:\n1. V. D. Savarkar stated that the 1857 Revolt was 'Neither First, nor National, nor a War of Independence'.\n2. R. C. Majumdar called the 1857 Revolt the 'First War of Independence'.",
+        qT: "பின்வரும் கூற்றுகளைக் கவனியுங்கள்:\n1. 1857 புரட்சி 'முதலாவதும் அல்ல, தேசியமும் அல்ல, சுதந்திரப் போரும் அல்ல' என்று வி. டி. சாவர்க்கர் கூறினார்.\n2. 1857 புரட்சியை 'முதல் சுதந்திரப் போர்' என்று ஆர். சி. மஜும்தார் அழைத்தார்.",
+        oE: ["Only 1", "Only 2", "Both 1 and 2", "Neither 1 nor 2"],
+        oT: ["1 மட்டும்", "2 மட்டும்", "1 மற்றும் 2 இரண்டும்", "1 மற்றும் 2 இரண்டும் இல்லை"],
+        a: 3,
+        exp: "Both statements are incorrect because the attributions are reversed: V. D. Savarkar called it the 'First War of Independence' and R. C. Majumdar made the other remark."
+    },
+    // 89 (1857 - Ans: 2 - Both 1 and 2)
+    {
+        qE: "Consider the following statements:\n1. The Government of India Act, 1858 abolished the East India Company and transferred power to the British Crown.\n2. Following the 1857 Revolt, the British Indian Army was reorganized based on the Peel Commission recommendations.",
+        qT: "பின்வரும் கூற்றுகளைக் கவனியுங்கள்:\n1. 1858 இந்திய அரசுச் சட்டம் கிழக்கிந்திய கம்பெனியை ஒழித்து அதிகாரத்தை பிரிட்டிஷ் முடியாட்சிக்கு மாற்றியது.\n2. 1857 புரட்சிக்குப் பிறகு பீல் ஆணையத்தின் பரிந்துரைகளின் அடிப்படையில் பிரிட்டிஷ் இந்திய ராணுவம் மறுசீரமைக்கப்பட்டது.",
+        oE: ["Only 1", "Only 2", "Both 1 and 2", "Neither 1 nor 2"],
+        oT: ["1 மட்டும்", "2 மட்டும்", "1 மற்றும் 2 இரண்டும்", "1 மற்றும் 2 இரண்டும் இல்லை"],
+        a: 2,
+        exp: "Both statements are correct."
+    },
+    // 90 (1857 - Ans: 1 - Only 2)
+    {
+        qE: "Consider the following statements:\n1. The Summary Settlement of 1856 in Awadh strengthened the land rights of traditional Taluqdars.\n2. The Revolt of 1857 was suppressed in Delhi by John Nicholson.",
+        qT: "பின்வரும் கூற்றுகளைக் கவனியுங்கள்:\n1. 1856 அவத் சுருக்க நிலவரித் திட்டம் பாரம்பரிய தாலுக்தார்களின் நில உரிமைகளை வலுப்படுத்தியது.\n2. டெல்லியில் 1857 புரட்சி ஜான் நிக்கல்சனால் அடக்கப்பட்டது.",
+        oE: ["Only 1", "Only 2", "Both 1 and 2", "Neither 1 nor 2"],
+        oT: ["1 மட்டும்", "2 மட்டும்", "1 மற்றும் 2 இரண்டும்", "1 மற்றும் 2 இரண்டும் இல்லை"],
+        a: 1,
+        exp: "Statement 1 is incorrect because the Summary Settlement of 1856 bypassed and dispossessed the Taluqdars. Statement 2 is correct."
+    },
+    // 91 (Non-1857 - Ans: 3 - Neither 1 nor 2)
+    {
+        qE: "Consider the following statements:\n1. Under the Ryotwari System, Zamindars were recognized as the owners of the land.\n2. Under the Permanent Settlement, revenue was settled directly with the Ryots without intermediaries.",
+        qT: "பின்வரும் கூற்றுகளைக் கவனியுங்கள்:\n1. ரயத்துவாரி முறையின் கீழ் ஜமீன்தார்கள் நிலத்தின் உரிமையாளர்களாக அங்கீகரிக்கப்பட்டனர்.\n2. நிரந்தர நிலவரித் திட்டத்தின் கீழ் இடைத்தரகர்கள் இன்றி விவசாயிகளுடன் நேரடியாக வரி நிர்ணயம் செய்யப்பட்டது.",
+        oE: ["Only 1", "Only 2", "Both 1 and 2", "Neither 1 nor 2"],
+        oT: ["1 மட்டும்", "2 மட்டும்", "1 மற்றும் 2 இரண்டும்", "1 மற்றும் 2 இரண்டும் இல்லை"],
+        a: 3,
+        exp: "Both statements are incorrect because the two systems are swapped: Permanent Settlement recognized Zamindars as owners, while Ryotwari settled revenue directly with Ryots."
+    },
+    // 92 (Non-1857 - Ans: 0 - Only 1)
+    {
+        qE: "Consider the following statements:\n1. The Mahalwari System was conceptualized by Holt Mackenzie in 1822 and reformed by William Bentinck in 1833.\n2. Under the Permanent Settlement, Zamindars kept 10/11th of the revenue and gave 1/11th to the British government.",
+        qT: "பின்வரும் கூற்றுகளைக் கவனியுங்கள்:\n1. மஹல்வாரி முறை 1822-இல் ஹோல்ட் மெக்கன்சியால் உருவாக்கப்பட்டு 1833-இல் வில்லியம் பென்டிங்கால் சீர்திருத்தப்பட்டது.\n2. நிரந்தர நிலவரித் திட்டத்தின் கீழ் ஜமீன்தார்கள் 10/11 பங்கு வருவாயை வைத்துக்கொண்டு 1/11 பங்கை பிரிட்டிஷ் அரசாங்கத்திற்கு வழங்கினர்.",
+        oE: ["Only 1", "Only 2", "Both 1 and 2", "Neither 1 nor 2"],
+        oT: ["1 மட்டும்", "2 மட்டும்", "1 மற்றும் 2 இரண்டும்", "1 மற்றும் 2 இரண்டும் இல்லை"],
+        a: 0,
+        exp: "Statement 1 is correct. Statement 2 is incorrect because the British government took 10/11th of the revenue and Zamindars kept 1/11th."
+    },
+    // 93 (Non-1857 - Ans: 1 - Only 2)
+    {
+        qE: "Consider the following statements:\n1. The Paika Revolt of 1817 took place in Assam under Gomdhar Konwar.\n2. The Ahom Revolt of 1828 took place in Rangpur, Assam under Gomdhar Konwar.",
+        qT: "பின்வரும் கூற்றுகளைக் கவனியுங்கள்:\n1. 1817 பாய்கா புரட்சி கோம்தர் கொன்வர் தலைமையில் அசாமில் நடைபெற்றது.\n2. 1828 அகோம் புரட்சி கோம்தர் கொன்வர் தலைமையில் அசாமின் ரங்பூரில் நடைபெற்றது.",
+        oE: ["Only 1", "Only 2", "Both 1 and 2", "Neither 1 nor 2"],
+        oT: ["1 மட்டும்", "2 மட்டும்", "1 மற்றும் 2 இரண்டும்", "1 மற்றும் 2 இரண்டும் இல்லை"],
+        a: 1,
+        exp: "Statement 1 is incorrect because the Paika Revolt (1817) occurred in Khurda, Odisha under Bakshi Jagbandhu Bidyadhar. Statement 2 is correct."
+    },
+    // 94 (Non-1857 - Ans: 2 - Both 1 and 2)
+    {
+        qE: "Consider the following statements:\n1. The Sanyasi Revolt is mentioned in Bankim Chandra Chatterjee's novel 'Anandmath'.\n2. The Kuka Revolt under Baba Ram Singh aimed to restore the purity of the Sikh religion.",
+        qT: "பின்வரும் கூற்றுகளைக் கவனியுங்கள்:\n1. பங்கிம் சந்திர சாட்டர்ஜியின் 'ஆனந்தமடம்' நாவலில் சந்நியாசி புரட்சி குறிப்பிடப்பட்டுள்ளது.\n2. பாபா ராம் சிங் தலைமையிலான கூக்கா புரட்சி சீக்கிய மதத்தின் தூய்மையை மீட்டெடுப்பதை நோக்கமாகக் கொண்டது.",
+        oE: ["Only 1", "Only 2", "Both 1 and 2", "Neither 1 nor 2"],
+        oT: ["1 மட்டும்", "2 மட்டும்", "1 மற்றும் 2 இரண்டும்", "1 மற்றும் 2 இரண்டும் இல்லை"],
+        a: 2,
+        exp: "Both statements are correct."
+    },
+    // 95 (Non-1857 - Ans: 3 - Neither 1 nor 2)
+    {
+        qE: "Consider the following statements:\n1. The Santhal Rebellion of 1855 was led by Birsa Munda.\n2. The Kol Mutiny of 1831 was led by Sidhu and Kanhu Murmu.",
+        qT: "பின்வரும் கூற்றுகளைக் கவனியுங்கள்:\n1. 1855 சந்தால் கிளர்ச்சி பிர்சா முண்டா தலைமையில் நடைபெற்றது.\n2. 1831 கோல் கலகம் சிது மற்றும் கன்ஹு முர்மு தலைமையில் நடைபெற்றது.",
+        oE: ["Only 1", "Only 2", "Both 1 and 2", "Neither 1 nor 2"],
+        oT: ["1 மட்டும்", "2 மட்டும்", "1 மற்றும் 2 இரண்டும்", "1 மற்றும் 2 இரண்டும் இல்லை"],
+        a: 3,
+        exp: "Both statements are incorrect. Sidhu and Kanhu Murmu led the Santhal Rebellion (1855), Budho Bhagat led the Kol Mutiny (1831), and Birsa Munda led the Munda Uprising."
+    },
+    // 96 (Non-1857 - Ans: 0 - Only 1)
+    {
+        qE: "Consider the following statements:\n1. Before the Santhals settled in Damin-i-Koh, the Pahariya tribe inhabited the Rajmahal Hills and revolted in 1778.\n2. The Gadkari Uprising of 1844 started in Malabar, Kerala.",
+        qT: "பின்வரும் கூற்றுகளைக் கவனியுங்கள்:\n1. சந்தால்கள் தாமின்-இ-கோவில் குடியேறுவதற்கு முன்பு, பஹாரியா பழங்குடியினர் ராஜ்மஹால் குன்றுகளில் வசித்து 1778-இல் கிளர்ச்சி செய்தனர்.\n2. 1844 கட்கரி எழுச்சி கேரளாவின் மலபாரில் தொடங்கியது.",
+        oE: ["Only 1", "Only 2", "Both 1 and 2", "Neither 1 nor 2"],
+        oT: ["1 மட்டும்", "2 மட்டும்", "1 மற்றும் 2 இரண்டும்", "1 மற்றும் 2 இரண்டும் இல்லை"],
+        a: 0,
+        exp: "Statement 1 is correct. Statement 2 is incorrect because the Gadkari Uprising (1844) started in Kolhapur, Maharashtra."
+    },
+    // 97 (Non-1857 - Ans: 2 - Both 1 and 2)
+    {
+        qE: "Consider the following statements:\n1. The Indigo Revolt of 1859 was led by Digambar Biswas and Bishnucharan Biswas.\n2. Dinbandhu Mitra wrote the play 'Nil Darpan', which was translated into English by Michael Madhusudan Dutt.",
+        qT: "பின்வரும் கூற்றுகளைக் கவனியுங்கள்:\n1. 1859 அவுரிப் புரட்சி திகம்பர் பிஸ்வாஸ் மற்றும் பிஷ்ணுசரண் பிஸ்வாஸ் தலைமையில் நடைபெற்றது.\n2. தீனபந்து மித்ரா எழுதிய 'நீல் தர்பன்' நாடகம் மைக்கேல் மதுசூதன் தத்தால் ஆங்கிலத்தில் மொழிபெயர்க்கப்பட்டது.",
+        oE: ["Only 1", "Only 2", "Both 1 and 2", "Neither 1 nor 2"],
+        oT: ["1 மட்டும்", "2 மட்டும்", "1 மற்றும் 2 இரண்டும்", "1 மற்றும் 2 இரண்டும் இல்லை"],
+        a: 2,
+        exp: "Both statements are correct."
+    },
+    // 98 (Non-1857 - Ans: 1 - Only 2)
+    {
+        qE: "Consider the following statements:\n1. The Deccan Revolt of 1875 broke out in Nadia district of Bengal.\n2. The Deccan Agriculturists' Relief Act was passed in 1879 following the Deccan Riots Commission.",
+        qT: "பின்வரும் கூற்றுகளைக் கவனியுங்கள்:\n1. 1875 தக்காணப் புரட்சி வங்காளத்தின் நதியா மாவட்டத்தில் வெடித்தது.\n2. தக்காணக் கலவர ஆணையத்தைத் தொடர்ந்து 1879-இல் தக்காண விவசாயிகள் நிவாரணச் சட்டம் நிறைவேற்றப்பட்டது.",
+        oE: ["Only 1", "Only 2", "Both 1 and 2", "Neither 1 nor 2"],
+        oT: ["1 மட்டும்", "2 மட்டும்", "1 மற்றும் 2 இரண்டும்", "1 மற்றும் 2 இரண்டும் இல்லை"],
+        a: 1,
+        exp: "Statement 1 is incorrect because the Deccan Revolt broke out in Maharashtra (Indigo Revolt started in Nadia, Bengal). Statement 2 is correct."
+    },
+    // 99 (Non-1857 - Ans: 0 - Only 1)
+    {
+        qE: "Consider the following statements:\n1. Ishan Chandra Roy, leader of the Pabna Revolt, was also known as 'Bidrohi Raja'.\n2. The Ramosi Peasant Force of 1879 was founded in Bengal.",
+        qT: "பின்வரும் கூற்றுகளைக் கவனியுங்கள்:\n1. பப்னா புரட்சியின் தலைவரான இஷான் சந்திர ராய் 'பித்ரோஹி ராஜா' என்றும் அழைக்கப்பட்டார்.\n2. 1879-ஆம் ஆண்டின் ராமோசி விவசாயப் படை வங்காளத்தில் நிறுவப்பட்டது.",
+        oE: ["Only 1", "Only 2", "Both 1 and 2", "Neither 1 nor 2"],
+        oT: ["1 மட்டும்", "2 மட்டும்", "1 மற்றும் 2 இரண்டும்", "1 மற்றும் 2 இரண்டும் இல்லை"],
+        a: 0,
+        exp: "Statement 1 is correct. Statement 2 is incorrect because the Ramosi Peasant Force was founded by Vasudev Balwant Phadke in Maharashtra."
+    },
+    // 100 (Non-1857 - Ans: 3 - Neither 1 nor 2)
+    {
+        qE: "Consider the following statements:\n1. The American Civil War of 1861 caused cotton prices in India to crash immediately.\n2. The Limitation Law of 1859 made loan bonds valid for 10 years.",
+        qT: "பின்வரும் கூற்றுகளைக் கவனியுங்கள்:\n1. 1861 அமெரிக்க உள்நாட்டுப் போர் இந்தியாவில் பருத்தி விலையை உடனடியாக வீழ்ச்சியடையச் செய்தது.\n2. 1859 காலவரம்புச் சட்டம் கடன் பத்திரங்களை 10 ஆண்டுகளுக்குச் செல்லுபடியாகும் வகையில் ஆக்கியது.",
+        oE: ["Only 1", "Only 2", "Both 1 and 2", "Neither 1 nor 2"],
+        oT: ["1 மட்டும்", "2 மட்டும்", "1 மற்றும் 2 இரண்டும்", "1 மற்றும் 2 இரண்டும் இல்லை"],
+        a: 3,
+        exp: "Both statements are incorrect. The American Civil War caused a cotton boom in India (prices crashed in 1865 when the war ended), and the Limitation Law made loan bonds valid for only 3 years."
+    }
+];
+let quizData = [];
+let currentQ = 0;
+let answers = [];
+let status = []; // 0: Not Visited, 1: Not Answered, 2: Answered, 3: Marked, 4: Answered & Marked
+
+// Shuffle array algorithm
+function shuffleArray(array) {
+    let shuffled = array.slice();
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
+// Switch Views
+function switchView(viewId) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(viewId).classList.add('active');
+}
+
+function startQuiz() {
+    quizData = shuffleArray(baseQuizData);
+   answers = new Array(quizData.length).fill(null);
+   status = new Array(quizData.length).fill(0);
+    
+    switchView('view-quiz');
+    
+    buildPalette();
+    loadQuestion(0);
+    startTimer();
+    
+    if(window.innerWidth <= 768) {
+        document.getElementById('close-palette-btn').style.display = 'block';
+    }
+}
+
+function buildPalette() {
+    const grid = document.getElementById('palette-grid');
+    grid.innerHTML = '';
+    for(let i=0; i<quizData.length; i++) {
+        let bubble = document.createElement('div');
+        bubble.className = 'q-bubble status-' + status[i];
+        bubble.innerText = (i+1);
+        bubble.id = 'pb-' + i;
+        bubble.onclick = () => jumpToQuestion(i);
+        grid.appendChild(bubble);
+    }
+}
+
+function syncAnswer() {
+    let selected = document.querySelector('input[name="opt"]:checked');
+    if(selected) {
+        answers[currentQ] = parseInt(selected.value);
+    } else {
+        answers[currentQ] = null;
+    }
+}
+
+function updatePaletteCSS() {
+    for(let i=0; i<quizData.length; i++) {
+        let bubble = document.getElementById('pb-' + i);
+        bubble.className = 'q-bubble status-' + status[i];
+        if(i === currentQ) bubble.classList.add('active');
+    }
+}
+
+function loadQuestion(index) {
+    if(status[currentQ] === 0) {
+        status[currentQ] = (answers[currentQ] !== null) ? 2 : 1;
+    }
+    
+    currentQ = index;
+    if(status[currentQ] === 0) status[currentQ] = 1;
+
+    document.getElementById('q-no').innerText = "Question " + (currentQ + 1);
+    
+    // Format statement questions with line breaks
+    let qTextEn = quizData[currentQ].qE.replace(/\n/g, "<br>");
+    let qTextTa = quizData[currentQ].qT.replace(/\n/g, "<br>");
+    
+    document.getElementById('q-text-en').innerHTML = qTextEn;
+    document.getElementById('q-text-ta').innerHTML = qTextTa;
+
+    let optHtml = '';
+    for(let i=0; i<4; i++) {
+        let checked = (answers[currentQ] === i) ? 'checked' : '';
+        optHtml += `
+            <label class="option-label">
+                <input type="radio" name="opt" value="${i}" ${checked} onchange="syncAnswer()">
+                <div>
+                    <div>${quizData[currentQ].oE[i]}</div>
+                    <div style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px;">${quizData[currentQ].oT[i]}</div>
+                </div>
+            </label>
+        `;
+    }
+    document.getElementById('options-container').innerHTML = optHtml;
+    
+    // Clear scroll position to top of container when moving to a new question
+    document.querySelector('.question-scroll-area').scrollTop = 0;
+    
+    updatePaletteCSS();
+}
+
+function jumpToQuestion(i) {
+    syncAnswer();
+    loadQuestion(i);
+    if(window.innerWidth <= 768) togglePalette();
+}
+
+function saveAndNext() {
+    syncAnswer();
+    status[currentQ] = (answers[currentQ] !== null) ? 2 : 1;
+    if(currentQ < quizData.length - 1) loadQuestion(currentQ + 1);
+    else updatePaletteCSS();
+}
+
+function markAndNext() {
+    syncAnswer();
+    status[currentQ] = (answers[currentQ] !== null) ? 4 : 3;
+    if(currentQ < quizData.length - 1) loadQuestion(currentQ + 1);
+    else updatePaletteCSS();
+}
+
+function clearResponse() {
+    answers[currentQ] = null;
+    status[currentQ] = 1;
+    loadQuestion(currentQ);
+}
+
+function prevQuestion() {
+    syncAnswer();
+    if(currentQ > 0) loadQuestion(currentQ - 1);
+}
+
+function togglePalette() {
+    document.getElementById('palette').classList.toggle('open');
+}
+
+// Timer Logic
+let timeLimit = 30 * 60; // 15 mins
+let timerInterval;
+
+function startTimer() {
+    timerInterval = setInterval(() => {
+        timeLimit--;
+        let m = Math.floor(timeLimit / 60).toString().padStart(2, '0');
+        let s = (timeLimit % 60).toString().padStart(2, '0');
+        document.getElementById('timer').innerText = m + ':' + s;
+        if(timeLimit <= 0) {
+            clearInterval(timerInterval);
+            submitExam();
+        }
+    }, 1000);
+}
+
+// Custom Submit Modals
+function showSubmitConfirm() {
+    syncAnswer();
+    let unattempted = answers.filter(a => a === null).length;
+    let warningTxt = document.getElementById('unanswered-warning');
+    if(unattempted > 0) {
+        warningTxt.innerText = `You have ${unattempted} unattempted questions!`;
+        warningTxt.style.display = 'block';
+    } else {
+        warningTxt.style.display = 'none';
+    }
+    document.getElementById('confirm-modal').style.display = 'flex';
+}
+
+function closeSubmitConfirm() {
+    document.getElementById('confirm-modal').style.display = 'none';
+}
+
+function submitExam() {
+    clearInterval(timerInterval);
+    document.getElementById('confirm-modal').style.display = 'none';
+    syncAnswer();
+    
+    let correct = 0, wrong = 0, unattempted = 0;
+    
+    quizData.forEach((q, i) => {
+        if(answers[i] === null) unattempted++;
+        else if(answers[i] === q.a) correct++;
+        else wrong++;
+    });
+    
+    let score = correct - (wrong * 0.3333);
+    
+    document.getElementById('res-score').innerText = score.toFixed(2);
+    document.getElementById('res-correct').innerText = correct;
+    document.getElementById('res-wrong').innerText = wrong;
+    document.getElementById('res-unattempted').innerText = unattempted;
+    document.getElementById('out-of-text').innerText = `(Out of ${quizData.length})`;
+    switchView('view-results');
+}
+
+// Detailed Review with Tabs
+function showDetailedReview() {
+    let htmlCorrect = '';
+    let htmlWrong = '';
+    let htmlUnattempted = '';
+    
+    quizData.forEach((q, i) => {
+        let isAttempted = answers[i] !== null;
+        let isCorrect = isAttempted && answers[i] === q.a;
+        let cssClass = !isAttempted ? 'unattempted' : (isCorrect ? 'correct' : 'wrong');
+        
+        let chosenText = isAttempted ? q.oE[answers[i]] : "None";
+        let correctText = q.oE[q.a];
+        
+        let qText = q.qE.replace(/\n/g, "<br>");
+        let tagHtml = !isAttempted ? `<span class="answer-tag tag-unattempted">Unattempted</span>` : 
+                      isCorrect ? `<span class="answer-tag tag-correct">Correct (+1.0)</span>` : 
+                      `<span class="answer-tag tag-wrong">Incorrect (-0.33)</span>`;
+                      
+        let explanationText = q.exp || `The correct answer is ${correctText}.`;
+        
+        let itemHtml = `
+            <div class="review-item ${cssClass}">
+                <strong style="font-size: 1.1rem; color: #fff;">Q${i+1}: ${qText}</strong><br>
+                ${tagHtml}
+                <div style="margin-top: 15px; font-size: 0.95rem; display: grid; gap: 8px;">
+                    <div><span style="color: var(--text-secondary)">Your Answer:</span> <span style="color: ${!isAttempted ? '#9e9e9e' : isCorrect ? 'var(--color-answered)' : 'var(--color-not-answered)'}">${chosenText}</span></div>
+                    <div><span style="color: var(--text-secondary)">Correct Answer:</span> <span style="color: var(--color-answered); font-weight: bold;">${correctText}</span></div>
+                </div>
+                <div class="explanation-box">
+                    <strong style="color: var(--primary-cyan);">Explanation:</strong><br>
+                    ${explanationText}
+                </div>
+            </div>
+        `;
+        
+        if (!isAttempted) htmlUnattempted += itemHtml;
+        else if (isCorrect) htmlCorrect += itemHtml;
+        else htmlWrong += itemHtml;
+    });
+    
+    // Inject Content
+    document.getElementById('review-content-correct').innerHTML = htmlCorrect || "<div style='text-align:center; padding: 30px; color: var(--text-secondary);'>No correct answers recorded in this session.</div>";
+    document.getElementById('review-content-wrong').innerHTML = htmlWrong || "<div style='text-align:center; padding: 30px; color: var(--color-answered); font-weight: bold;'>Amazing job! You had no incorrect answers!</div>";
+    document.getElementById('review-content-unattempted').innerHTML = htmlUnattempted || "<div style='text-align:center; padding: 30px; color: var(--text-secondary);'>You attempted every single question. Great effort!</div>";
+    
+    // Setup Tab counts
+    document.getElementById('tab-count-correct').innerText = document.getElementById('res-correct').innerText;
+    document.getElementById('tab-count-wrong').innerText = document.getElementById('res-wrong').innerText;
+    document.getElementById('tab-count-unattempted').innerText = document.getElementById('res-unattempted').innerText;
+    
+    // Display Section
+    document.getElementById('post-exam-actions').style.display = 'none';
+    document.getElementById('detailed-review-section').style.display = 'block';
+    
+    // Default to the first tab that has data
+    if (htmlWrong) switchTab('wrong');
+    else if (htmlCorrect) switchTab('correct');
+    else switchTab('unattempted');
+}
+
+function switchTab(tabId) {
+    // Reset buttons and content visibility
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    
+    // Activate chosen tab
+    document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('active');
+    document.getElementById(`review-content-${tabId}`).classList.add('active');
+}
+</script>
+</body>
+</html>
